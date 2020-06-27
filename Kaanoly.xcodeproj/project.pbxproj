@@ -7,6 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		88A34F6B24A733A9002DF00F /* KOCameraPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F6624A733A9002DF00F /* KOCameraPreviewViewController.swift */; };
+		88A34F6C24A733A9002DF00F /* KOCameraPreviewMovableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F6724A733A9002DF00F /* KOCameraPreviewMovableView.swift */; };
+		88A34F6D24A733A9002DF00F /* KOCameraPreviewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F6824A733A9002DF00F /* KOCameraPreviewDelegate.swift */; };
+		88A34F6E24A733A9002DF00F /* KOOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F6924A733A9002DF00F /* KOOverlayWindow.swift */; };
+		88A34F6F24A733A9002DF00F /* KOOverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F6A24A733A9002DF00F /* KOOverlayViewController.swift */; };
+		88A34F7224A733B1002DF00F /* KOHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7024A733B1002DF00F /* KOHomeViewController.swift */; };
+		88A34F7324A733B1002DF00F /* KOHomeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7124A733B1002DF00F /* KOHomeWindow.swift */; };
+		88A34F7624A733B8002DF00F /* KOWindowsCoordinatorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7424A733B8002DF00F /* KOWindowsCoordinatorDelegate.swift */; };
+		88A34F7724A733B8002DF00F /* KOWindowsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7524A733B8002DF00F /* KOWindowsCoordinator.swift */; };
+		88A34F7B24A733BF002DF00F /* KOMultimediaRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7824A733BF002DF00F /* KOMultimediaRecorder.swift */; };
+		88A34F7C24A733BF002DF00F /* KOMediaSettingConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7924A733BF002DF00F /* KOMediaSettingConstants.swift */; };
+		88A34F7D24A733BF002DF00F /* KORecordingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7A24A733BF002DF00F /* KORecordingCoordinator.swift */; };
+		88A34F8024A733C6002DF00F /* KOColorProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7E24A733C6002DF00F /* KOColorProperties.swift */; };
+		88A34F8124A733C6002DF00F /* KOConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7F24A733C6002DF00F /* KOConstants.swift */; };
 		88F531A72482E93100B11309 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F531A62482E93100B11309 /* AppDelegate.swift */; };
 		88F531AB2482E93100B11309 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88F531AA2482E93100B11309 /* Assets.xcassets */; };
 		88F531AE2482E93100B11309 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88F531AD2482E93100B11309 /* Preview Assets.xcassets */; };
@@ -14,6 +28,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		88A34F6624A733A9002DF00F /* KOCameraPreviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewViewController.swift; sourceTree = "<group>"; };
+		88A34F6724A733A9002DF00F /* KOCameraPreviewMovableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewMovableView.swift; sourceTree = "<group>"; };
+		88A34F6824A733A9002DF00F /* KOCameraPreviewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewDelegate.swift; sourceTree = "<group>"; };
+		88A34F6924A733A9002DF00F /* KOOverlayWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOOverlayWindow.swift; sourceTree = "<group>"; };
+		88A34F6A24A733A9002DF00F /* KOOverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOOverlayViewController.swift; sourceTree = "<group>"; };
+		88A34F7024A733B1002DF00F /* KOHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOHomeViewController.swift; sourceTree = "<group>"; };
+		88A34F7124A733B1002DF00F /* KOHomeWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOHomeWindow.swift; sourceTree = "<group>"; };
+		88A34F7424A733B8002DF00F /* KOWindowsCoordinatorDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOWindowsCoordinatorDelegate.swift; sourceTree = "<group>"; };
+		88A34F7524A733B8002DF00F /* KOWindowsCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOWindowsCoordinator.swift; sourceTree = "<group>"; };
+		88A34F7824A733BF002DF00F /* KOMultimediaRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOMultimediaRecorder.swift; sourceTree = "<group>"; };
+		88A34F7924A733BF002DF00F /* KOMediaSettingConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOMediaSettingConstants.swift; sourceTree = "<group>"; };
+		88A34F7A24A733BF002DF00F /* KORecordingCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KORecordingCoordinator.swift; sourceTree = "<group>"; };
+		88A34F7E24A733C6002DF00F /* KOColorProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOColorProperties.swift; sourceTree = "<group>"; };
+		88A34F7F24A733C6002DF00F /* KOConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOConstants.swift; sourceTree = "<group>"; };
 		88F531A32482E93100B11309 /* Kaanoly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kaanoly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88F531A62482E93100B11309 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		88F531AA2482E93100B11309 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -34,6 +62,55 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		88A34F6124A732C9002DF00F /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				88A34F7E24A733C6002DF00F /* KOColorProperties.swift */,
+				88A34F7F24A733C6002DF00F /* KOConstants.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		88A34F6224A732D3002DF00F /* RecordingModule */ = {
+			isa = PBXGroup;
+			children = (
+				88A34F7924A733BF002DF00F /* KOMediaSettingConstants.swift */,
+				88A34F7824A733BF002DF00F /* KOMultimediaRecorder.swift */,
+				88A34F7A24A733BF002DF00F /* KORecordingCoordinator.swift */,
+			);
+			path = RecordingModule;
+			sourceTree = "<group>";
+		};
+		88A34F6324A732E0002DF00F /* Coordinators */ = {
+			isa = PBXGroup;
+			children = (
+				88A34F7524A733B8002DF00F /* KOWindowsCoordinator.swift */,
+				88A34F7424A733B8002DF00F /* KOWindowsCoordinatorDelegate.swift */,
+			);
+			path = Coordinators;
+			sourceTree = "<group>";
+		};
+		88A34F6424A732E9002DF00F /* HomeModule */ = {
+			isa = PBXGroup;
+			children = (
+				88A34F7024A733B1002DF00F /* KOHomeViewController.swift */,
+				88A34F7124A733B1002DF00F /* KOHomeWindow.swift */,
+			);
+			path = HomeModule;
+			sourceTree = "<group>";
+		};
+		88A34F6524A732F4002DF00F /* OverlayModule */ = {
+			isa = PBXGroup;
+			children = (
+				88A34F6824A733A9002DF00F /* KOCameraPreviewDelegate.swift */,
+				88A34F6724A733A9002DF00F /* KOCameraPreviewMovableView.swift */,
+				88A34F6624A733A9002DF00F /* KOCameraPreviewViewController.swift */,
+				88A34F6A24A733A9002DF00F /* KOOverlayViewController.swift */,
+				88A34F6924A733A9002DF00F /* KOOverlayWindow.swift */,
+			);
+			path = OverlayModule;
+			sourceTree = "<group>";
+		};
 		88F5319A2482E93100B11309 = {
 			isa = PBXGroup;
 			children = (
@@ -53,6 +130,11 @@
 		88F531A52482E93100B11309 /* Kaanoly */ = {
 			isa = PBXGroup;
 			children = (
+				88A34F6524A732F4002DF00F /* OverlayModule */,
+				88A34F6424A732E9002DF00F /* HomeModule */,
+				88A34F6324A732E0002DF00F /* Coordinators */,
+				88A34F6224A732D3002DF00F /* RecordingModule */,
+				88A34F6124A732C9002DF00F /* Utilities */,
 				88F531A62482E93100B11309 /* AppDelegate.swift */,
 				88F531AA2482E93100B11309 /* Assets.xcassets */,
 				88F531AF2482E93100B11309 /* Main.storyboard */,
@@ -142,7 +224,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88A34F7324A733B1002DF00F /* KOHomeWindow.swift in Sources */,
+				88A34F7624A733B8002DF00F /* KOWindowsCoordinatorDelegate.swift in Sources */,
+				88A34F7D24A733BF002DF00F /* KORecordingCoordinator.swift in Sources */,
+				88A34F7724A733B8002DF00F /* KOWindowsCoordinator.swift in Sources */,
+				88A34F8024A733C6002DF00F /* KOColorProperties.swift in Sources */,
+				88A34F7B24A733BF002DF00F /* KOMultimediaRecorder.swift in Sources */,
+				88A34F6E24A733A9002DF00F /* KOOverlayWindow.swift in Sources */,
+				88A34F7C24A733BF002DF00F /* KOMediaSettingConstants.swift in Sources */,
+				88A34F8124A733C6002DF00F /* KOConstants.swift in Sources */,
+				88A34F6D24A733A9002DF00F /* KOCameraPreviewDelegate.swift in Sources */,
+				88A34F6C24A733A9002DF00F /* KOCameraPreviewMovableView.swift in Sources */,
+				88A34F6B24A733A9002DF00F /* KOCameraPreviewViewController.swift in Sources */,
 				88F531A72482E93100B11309 /* AppDelegate.swift in Sources */,
+				88A34F7224A733B1002DF00F /* KOHomeViewController.swift in Sources */,
+				88A34F6F24A733A9002DF00F /* KOOverlayViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

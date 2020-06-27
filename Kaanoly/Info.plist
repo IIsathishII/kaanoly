@@ -32,5 +32,11 @@
 	<true/>
 	<key>NSSupportsSuddenTermination</key>
 	<true/>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>bleh</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>bleh micro</string>
 </dict>
 </plist>

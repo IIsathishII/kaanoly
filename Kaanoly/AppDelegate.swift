@@ -11,11 +11,13 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-    var window: NSWindow!
-
+    var coordinator : KOWindowsCoordinator!
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Create the SwiftUI view that provides the window contents.
+        coordinator = KOWindowsCoordinator.init()
+        NSApp.presentationOptions = [.autoHideDock]
+        NSApp.setActivationPolicy(.accessory)
+        NSRunningApplication.current.activate(options: .activateAllWindows)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
