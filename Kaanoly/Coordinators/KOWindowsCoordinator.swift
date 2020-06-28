@@ -42,7 +42,7 @@ class KOWindowsCoordinator {
             
             homeWindow = KOHomeWindow.init()
             homeWindow?.homeViewController.delegate = self
-            homeWindow?.level = .floating
+            homeWindow?.level = NSWindow.Level.init(NSWindow.Level.screenSaver.rawValue+1)
             homeWindow?.collectionBehavior = [.canJoinAllSpaces, .fullScreenPrimary, .transient]
             homeWindow?.orderFrontRegardless()
         }

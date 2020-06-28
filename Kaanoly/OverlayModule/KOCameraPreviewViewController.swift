@@ -28,7 +28,7 @@ class KOCameraPreviewViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.wantsLayer = true
-        self.view.layer?.backgroundColor = NSColor.clear.cgColor
+        self.view.layer?.backgroundColor = NSColor.black.cgColor
         self.view.layer?.borderColor = colorProps.cameraPreviewBorderColor.cgColor
         self.view.layer?.borderWidth = 1
         self.view.layer?.cornerRadius = 4

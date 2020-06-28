@@ -31,6 +31,7 @@ class KORecordingCoordinator {
             self.setupRecorder(mediaSource: mediaSource)
             return
         }
+        self.recorder?.clearRecorder()
         self.recorder?.setupRecorder(mediaSource: mediaSource)
     }
     

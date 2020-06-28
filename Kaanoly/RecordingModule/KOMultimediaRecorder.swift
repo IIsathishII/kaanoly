@@ -36,12 +36,12 @@ class KOMultimediaRecorder : NSObject, AVCaptureFileOutputRecordingDelegate {
         self.setupRecorder(mediaSource: mediaSource)
     }
     
-    func destroyRecorder() {
+    func clearRecorder() {
         screenCaptureSession = nil; cameraCaptureSession = nil
         camera = nil; microphone = nil
         screenInput = nil; cameraInput = nil; audioInput = nil
-        cameraPreview = nil
-        cameraPreview?.session = nil
+//        cameraPreview = nil
+//        cameraPreview?.session = nil
         screenOutput = nil; cameraOutput = nil
     }
     

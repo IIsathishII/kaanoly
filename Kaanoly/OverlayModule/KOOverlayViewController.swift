@@ -31,19 +31,20 @@ class KOOverlayViewController : NSViewController {
         let size = KORecordingCoordinator.sharedInstance.getPreviewLayerSize()
         let height = cameraPreviewSize*CGFloat(size.1)/CGFloat(size.0)
         let screenFrame = NSScreen.main?.frame ?? NSRect.zero
+        var previewFrame = cameraPreviewView?.frame ?? .zero
         if cameraPreviewController == nil {
             cameraPreviewController = KOCameraPreviewViewController.init()
             cameraPreviewView = cameraPreviewController?.view
             cameraPreviewController?.previewView.delegate = self
             self.view.addSubview(cameraPreviewView!)
-            cameraPreviewView?.frame = NSRect.init(x: 24, y: screenFrame.height-height-24, width: cameraPreviewSize, height: height)
+            previewFrame = NSRect.init(x: 24, y: screenFrame.height-height-24, width: cameraPreviewSize, height: height)
         }
-        let previewFrame = cameraPreviewView?.frame ?? .zero
         if self.cameraPreviewSize == CameraPreviewConstants.Size.large {
-            cameraPreviewView?.frame = NSRect.init(x: (screenFrame.size.width-cameraPreviewSize)/2, y: (screenFrame.size.height-height)/2, width: cameraPreviewSize, height: height)
+            previewFrame = NSRect.init(x: (screenFrame.size.width-cameraPreviewSize)/2, y: (screenFrame.size.height-height)/2, width: cameraPreviewSize, height: height)
         } else {
-            cameraPreviewView?.frame = NSRect.init(x: previewFrame.origin.x, y: previewFrame.origin.y, width: cameraPreviewSize, height: height)
+            previewFrame = NSRect.init(x: previewFrame.origin.x, y: previewFrame.origin.y, width: cameraPreviewSize, height: height)
         }
+        cameraPreviewView?.frame = previewFrame
     }
     
     func removeCameraPreview() {
