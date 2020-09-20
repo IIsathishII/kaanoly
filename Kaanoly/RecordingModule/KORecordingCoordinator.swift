@@ -14,6 +14,8 @@ class KORecordingCoordinator {
     private var recorder: KOMultimediaRecorder?
     static let sharedInstance = KORecordingCoordinator.init()
     
+    weak var propertiesManager : KOPropertiesDataManager?
+    
     private init() {
         
     }
@@ -22,17 +24,18 @@ class KORecordingCoordinator {
         return sharedInstance.recorder != nil
     }
     
-    func setupRecorder(mediaSource: KOMediaSettings.MediaSource) {
-        KORecordingCoordinator.sharedInstance.recorder = KOMultimediaRecorder.init(mediaSource: mediaSource)
+    func setupRecorder(propertiesManager: KOPropertiesDataManager?) {
+        KORecordingCoordinator.sharedInstance.recorder = KOMultimediaRecorder.init()
+        KORecordingCoordinator.sharedInstance.recorder?.setup(propertiesManager: propertiesManager)
     }
     
-    func modifyRecorder(mediaSource: KOMediaSettings.MediaSource) {
+    func modifyRecorder(propertiesManager: KOPropertiesDataManager? = nil) {
         if self.recorder == nil {
-            self.setupRecorder(mediaSource: mediaSource)
+            self.setupRecorder(propertiesManager: propertiesManager)
             return
         }
         self.recorder?.clearRecorder()
-        self.recorder?.setupRecorder(mediaSource: mediaSource)
+        self.recorder?.setupRecorder()
     }
     
     func beginRecording() {

@@ -7,11 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		88A34F6B24A733A9002DF00F /* KOCameraPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F6624A733A9002DF00F /* KOCameraPreviewViewController.swift */; };
-		88A34F6C24A733A9002DF00F /* KOCameraPreviewMovableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F6724A733A9002DF00F /* KOCameraPreviewMovableView.swift */; };
-		88A34F6D24A733A9002DF00F /* KOCameraPreviewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F6824A733A9002DF00F /* KOCameraPreviewDelegate.swift */; };
+		884EEBCD2517AF8300168F9E /* KOPropertiesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBCB2517AF8300168F9E /* KOPropertiesStore.swift */; };
+		884EEBCE2517AF8300168F9E /* KOPropertiesDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBCC2517AF8300168F9E /* KOPropertiesDataManager.swift */; };
+		884EEBDD2517AF9300168F9E /* KOCameraPreviewMovableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBD12517AF9300168F9E /* KOCameraPreviewMovableView.swift */; };
+		884EEBDE2517AF9300168F9E /* KOCameraPreviewMovableViewDragExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBD22517AF9300168F9E /* KOCameraPreviewMovableViewDragExtension.swift */; };
+		884EEBDF2517AF9300168F9E /* KOCameraPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBD32517AF9300168F9E /* KOCameraPreviewViewController.swift */; };
+		884EEBE02517AF9300168F9E /* KOCameraPreviewMovableViewResizeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBD42517AF9300168F9E /* KOCameraPreviewMovableViewResizeExtension.swift */; };
+		884EEBE12517AF9300168F9E /* KOOverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBD52517AF9300168F9E /* KOOverlayViewController.swift */; };
+		884EEBE22517AF9300168F9E /* KOOverlayPresenterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBD72517AF9300168F9E /* KOOverlayPresenterDelegate.swift */; };
+		884EEBE32517AF9300168F9E /* KOCameraPreviewPresenterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBD82517AF9300168F9E /* KOCameraPreviewPresenterDelegate.swift */; };
+		884EEBE42517AF9300168F9E /* KOOverlayViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBD92517AF9300168F9E /* KOOverlayViewDelegate.swift */; };
+		884EEBE52517AF9300168F9E /* KOOverlayPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBDB2517AF9300168F9E /* KOOverlayPresenter.swift */; };
+		884EEBE62517AF9300168F9E /* KOCameraPreviewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBDC2517AF9300168F9E /* KOCameraPreviewPresenter.swift */; };
+		884EEBE92517AFB200168F9E /* KOUserDefaultKeyConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBE82517AFB200168F9E /* KOUserDefaultKeyConstants.swift */; };
 		88A34F6E24A733A9002DF00F /* KOOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F6924A733A9002DF00F /* KOOverlayWindow.swift */; };
-		88A34F6F24A733A9002DF00F /* KOOverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F6A24A733A9002DF00F /* KOOverlayViewController.swift */; };
 		88A34F7224A733B1002DF00F /* KOHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7024A733B1002DF00F /* KOHomeViewController.swift */; };
 		88A34F7324A733B1002DF00F /* KOHomeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7124A733B1002DF00F /* KOHomeWindow.swift */; };
 		88A34F7624A733B8002DF00F /* KOWindowsCoordinatorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7424A733B8002DF00F /* KOWindowsCoordinatorDelegate.swift */; };
@@ -28,11 +37,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		88A34F6624A733A9002DF00F /* KOCameraPreviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewViewController.swift; sourceTree = "<group>"; };
-		88A34F6724A733A9002DF00F /* KOCameraPreviewMovableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewMovableView.swift; sourceTree = "<group>"; };
-		88A34F6824A733A9002DF00F /* KOCameraPreviewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewDelegate.swift; sourceTree = "<group>"; };
+		884EEBCB2517AF8300168F9E /* KOPropertiesStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOPropertiesStore.swift; sourceTree = "<group>"; };
+		884EEBCC2517AF8300168F9E /* KOPropertiesDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOPropertiesDataManager.swift; sourceTree = "<group>"; };
+		884EEBD12517AF9300168F9E /* KOCameraPreviewMovableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewMovableView.swift; sourceTree = "<group>"; };
+		884EEBD22517AF9300168F9E /* KOCameraPreviewMovableViewDragExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewMovableViewDragExtension.swift; sourceTree = "<group>"; };
+		884EEBD32517AF9300168F9E /* KOCameraPreviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewViewController.swift; sourceTree = "<group>"; };
+		884EEBD42517AF9300168F9E /* KOCameraPreviewMovableViewResizeExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewMovableViewResizeExtension.swift; sourceTree = "<group>"; };
+		884EEBD52517AF9300168F9E /* KOOverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOOverlayViewController.swift; sourceTree = "<group>"; };
+		884EEBD72517AF9300168F9E /* KOOverlayPresenterDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOOverlayPresenterDelegate.swift; sourceTree = "<group>"; };
+		884EEBD82517AF9300168F9E /* KOCameraPreviewPresenterDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewPresenterDelegate.swift; sourceTree = "<group>"; };
+		884EEBD92517AF9300168F9E /* KOOverlayViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOOverlayViewDelegate.swift; sourceTree = "<group>"; };
+		884EEBDB2517AF9300168F9E /* KOOverlayPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOOverlayPresenter.swift; sourceTree = "<group>"; };
+		884EEBDC2517AF9300168F9E /* KOCameraPreviewPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewPresenter.swift; sourceTree = "<group>"; };
+		884EEBE82517AFB200168F9E /* KOUserDefaultKeyConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOUserDefaultKeyConstants.swift; sourceTree = "<group>"; };
 		88A34F6924A733A9002DF00F /* KOOverlayWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOOverlayWindow.swift; sourceTree = "<group>"; };
-		88A34F6A24A733A9002DF00F /* KOOverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOOverlayViewController.swift; sourceTree = "<group>"; };
 		88A34F7024A733B1002DF00F /* KOHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOHomeViewController.swift; sourceTree = "<group>"; };
 		88A34F7124A733B1002DF00F /* KOHomeWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOHomeWindow.swift; sourceTree = "<group>"; };
 		88A34F7424A733B8002DF00F /* KOWindowsCoordinatorDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOWindowsCoordinatorDelegate.swift; sourceTree = "<group>"; };
@@ -62,9 +80,50 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		884EEBC82517ADEB00168F9E /* PropertiesModule */ = {
+			isa = PBXGroup;
+			children = (
+				884EEBCC2517AF8300168F9E /* KOPropertiesDataManager.swift */,
+				884EEBCB2517AF8300168F9E /* KOPropertiesStore.swift */,
+			);
+			path = PropertiesModule;
+			sourceTree = "<group>";
+		};
+		884EEBD02517AF9300168F9E /* View */ = {
+			isa = PBXGroup;
+			children = (
+				884EEBD12517AF9300168F9E /* KOCameraPreviewMovableView.swift */,
+				884EEBD22517AF9300168F9E /* KOCameraPreviewMovableViewDragExtension.swift */,
+				884EEBD32517AF9300168F9E /* KOCameraPreviewViewController.swift */,
+				884EEBD42517AF9300168F9E /* KOCameraPreviewMovableViewResizeExtension.swift */,
+				884EEBD52517AF9300168F9E /* KOOverlayViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		884EEBD62517AF9300168F9E /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				884EEBD72517AF9300168F9E /* KOOverlayPresenterDelegate.swift */,
+				884EEBD82517AF9300168F9E /* KOCameraPreviewPresenterDelegate.swift */,
+				884EEBD92517AF9300168F9E /* KOOverlayViewDelegate.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		884EEBDA2517AF9300168F9E /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				884EEBDB2517AF9300168F9E /* KOOverlayPresenter.swift */,
+				884EEBDC2517AF9300168F9E /* KOCameraPreviewPresenter.swift */,
+			);
+			path = Presenter;
+			sourceTree = "<group>";
+		};
 		88A34F6124A732C9002DF00F /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				884EEBE82517AFB200168F9E /* KOUserDefaultKeyConstants.swift */,
 				88A34F7E24A733C6002DF00F /* KOColorProperties.swift */,
 				88A34F7F24A733C6002DF00F /* KOConstants.swift */,
 			);
@@ -102,10 +161,9 @@
 		88A34F6524A732F4002DF00F /* OverlayModule */ = {
 			isa = PBXGroup;
 			children = (
-				88A34F6824A733A9002DF00F /* KOCameraPreviewDelegate.swift */,
-				88A34F6724A733A9002DF00F /* KOCameraPreviewMovableView.swift */,
-				88A34F6624A733A9002DF00F /* KOCameraPreviewViewController.swift */,
-				88A34F6A24A733A9002DF00F /* KOOverlayViewController.swift */,
+				884EEBDA2517AF9300168F9E /* Presenter */,
+				884EEBD62517AF9300168F9E /* Protocols */,
+				884EEBD02517AF9300168F9E /* View */,
 				88A34F6924A733A9002DF00F /* KOOverlayWindow.swift */,
 			);
 			path = OverlayModule;
@@ -130,6 +188,7 @@
 		88F531A52482E93100B11309 /* Kaanoly */ = {
 			isa = PBXGroup;
 			children = (
+				884EEBC82517ADEB00168F9E /* PropertiesModule */,
 				88A34F6524A732F4002DF00F /* OverlayModule */,
 				88A34F6424A732E9002DF00F /* HomeModule */,
 				88A34F6324A732E0002DF00F /* Coordinators */,
@@ -226,19 +285,28 @@
 			files = (
 				88A34F7324A733B1002DF00F /* KOHomeWindow.swift in Sources */,
 				88A34F7624A733B8002DF00F /* KOWindowsCoordinatorDelegate.swift in Sources */,
+				884EEBDF2517AF9300168F9E /* KOCameraPreviewViewController.swift in Sources */,
+				884EEBE42517AF9300168F9E /* KOOverlayViewDelegate.swift in Sources */,
+				884EEBDD2517AF9300168F9E /* KOCameraPreviewMovableView.swift in Sources */,
+				884EEBDE2517AF9300168F9E /* KOCameraPreviewMovableViewDragExtension.swift in Sources */,
+				884EEBE92517AFB200168F9E /* KOUserDefaultKeyConstants.swift in Sources */,
 				88A34F7D24A733BF002DF00F /* KORecordingCoordinator.swift in Sources */,
 				88A34F7724A733B8002DF00F /* KOWindowsCoordinator.swift in Sources */,
 				88A34F8024A733C6002DF00F /* KOColorProperties.swift in Sources */,
 				88A34F7B24A733BF002DF00F /* KOMultimediaRecorder.swift in Sources */,
+				884EEBE32517AF9300168F9E /* KOCameraPreviewPresenterDelegate.swift in Sources */,
 				88A34F6E24A733A9002DF00F /* KOOverlayWindow.swift in Sources */,
+				884EEBE22517AF9300168F9E /* KOOverlayPresenterDelegate.swift in Sources */,
 				88A34F7C24A733BF002DF00F /* KOMediaSettingConstants.swift in Sources */,
+				884EEBE12517AF9300168F9E /* KOOverlayViewController.swift in Sources */,
+				884EEBE02517AF9300168F9E /* KOCameraPreviewMovableViewResizeExtension.swift in Sources */,
 				88A34F8124A733C6002DF00F /* KOConstants.swift in Sources */,
-				88A34F6D24A733A9002DF00F /* KOCameraPreviewDelegate.swift in Sources */,
-				88A34F6C24A733A9002DF00F /* KOCameraPreviewMovableView.swift in Sources */,
-				88A34F6B24A733A9002DF00F /* KOCameraPreviewViewController.swift in Sources */,
 				88F531A72482E93100B11309 /* AppDelegate.swift in Sources */,
+				884EEBCD2517AF8300168F9E /* KOPropertiesStore.swift in Sources */,
+				884EEBE52517AF9300168F9E /* KOOverlayPresenter.swift in Sources */,
+				884EEBE62517AF9300168F9E /* KOCameraPreviewPresenter.swift in Sources */,
 				88A34F7224A733B1002DF00F /* KOHomeViewController.swift in Sources */,
-				88A34F6F24A733A9002DF00F /* KOOverlayViewController.swift in Sources */,
+				884EEBCE2517AF8300168F9E /* KOPropertiesDataManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

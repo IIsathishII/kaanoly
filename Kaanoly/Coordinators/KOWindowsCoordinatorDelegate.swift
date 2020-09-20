@@ -6,9 +6,10 @@
 //  Copyright © 2020 Ghost. All rights reserved.
 //
 
-import Foundation
+import AppKit
 
 protocol KOWindowsCoordinatorDelegate : class {
     
     func change(Source source: KOMediaSettings.MediaSource)
+    func change(Screen screen: NSScreen)
 }

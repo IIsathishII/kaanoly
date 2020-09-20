@@ -19,6 +19,10 @@ class KOHomeWindow : NSWindow {
         self.center()
     }
     
+    func setup(propertiesManager: KOPropertiesDataManager?) {
+        self.homeViewController.propertiesManager = propertiesManager
+    }
+    
     override func close() {
         super.close()
         KORecordingCoordinator.sharedInstance.destroyRecorder()

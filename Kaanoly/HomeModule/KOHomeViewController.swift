@@ -7,12 +7,14 @@
 //
 
 import AppKit
+import IOKit
 
 class KOHomeViewController : NSViewController {
-    
-    var delegate: KOWindowsCoordinatorDelegate?
+
     var startRecordingButton = NSButton.init()
     var isRecording = false
+    
+    weak var propertiesManager : KOPropertiesDataManager?
     
     override func loadView() {
         self.view = NSView.init()
@@ -29,6 +31,7 @@ class KOHomeViewController : NSViewController {
     override func viewDidLoad() {
         self.preferredContentSize = NSSize.init(width: 400, height: 300)
         self.setSourcePopup()
+        self.setScreenPopup()
         self.setRecordingButton()
     }
     
@@ -45,15 +48,37 @@ class KOHomeViewController : NSViewController {
         NSLayoutConstraint.activate(newConstraints)
     }
     
+    func setScreenPopup() {
+        var screenList = NSPopUpButton.init(frame: .zero, pullsDown: false)
+        screenList.target = self
+        screenList.action = #selector(selectScreen(_:))
+        var screenNames = [String]()
+        for i in 0..<NSScreen.screens.count {
+            screenNames.append("Screen \(i)")
+        }
+        screenList.addItems(withTitles: screenNames)
+        self.view.addSubview(screenList)
+        screenList.translatesAutoresizingMaskIntoConstraints = false
+        var newConstraints = [NSLayoutConstraint]()
+        newConstraints.append(screenList.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 24))
+        newConstraints.append(screenList.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 96))
+        NSLayoutConstraint.activate(newConstraints)
+    }
+    
     @objc func selectSource(_ sender: NSPopUpButton) {
         let index = sender.indexOfSelectedItem
         if index == 0 {
-            self.delegate?.change(Source: [.camera, .screen, .audio])
+            self.propertiesManager?.setSource([.camera, .screen, .audio])
         } else if index == 1 {
-            self.delegate?.change(Source: [.screen, .audio])
+            self.propertiesManager?.setSource([.screen, .audio])
         } else if index == 2 {
-            self.delegate?.change(Source: [.camera, .audio])
+            self.propertiesManager?.setSource([.camera, .audio])
         }
+    }
+    
+    @objc func selectScreen(_ sender: NSPopUpButton) {
+        let index = sender.indexOfSelectedItem
+        self.propertiesManager?.setCurrentScreen(NSScreen.screens[index])
     }
     
     func setRecordingButton() {
@@ -71,6 +96,9 @@ class KOHomeViewController : NSViewController {
     }
     
     @objc func beginRecording() {
+//        guard let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? NSArray else { return }
+//        print(windowList)
+        
         self.isRecording = !self.isRecording
         self.startRecordingButton.title = self.isRecording ? "End Recording!" : "Start Recording..."
         if self.isRecording {

@@ -8,10 +8,13 @@
 
 import Foundation
 import AVFoundation
+import CoreMediaIO
+import AppKit
+import CoreGraphics
 
-class KOMultimediaRecorder : NSObject, AVCaptureFileOutputRecordingDelegate {
+class KOMultimediaRecorder : NSObject {
     
-    var sources : KOMediaSettings.MediaSource
+    weak var propertiesManager : KOPropertiesDataManager?
     
     var screenCaptureSession : AVCaptureSession?
     var cameraCaptureSession : AVCaptureSession?
@@ -25,15 +28,21 @@ class KOMultimediaRecorder : NSObject, AVCaptureFileOutputRecordingDelegate {
     
     var cameraPreview : AVCaptureVideoPreviewLayer?
     
-    var screenOutput : AVCaptureMovieFileOutput?
-    var cameraOutput : AVCaptureMovieFileOutput?
+    var videoOutput : AVCaptureVideoDataOutput?
+    var audioOutput : AVCaptureAudioDataOutput?
     
     let recordingDest = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("final.mov")
     
-    init(mediaSource: KOMediaSettings.MediaSource) {
-        sources = mediaSource
+    var assetWriter : AVAssetWriter?
+    var isRecording = false
+    var sessionAtSourceTime : CMTime?
+    var videoWriterInput : AVAssetWriterInput?
+    var audioWriterInput : AVAssetWriterInput?
+    
+    var isPrepared = false
+    
+    override init() {
         super.init()
-        self.setupRecorder(mediaSource: mediaSource)
     }
     
     func clearRecorder() {
@@ -42,16 +51,22 @@ class KOMultimediaRecorder : NSObject, AVCaptureFileOutputRecordingDelegate {
         screenInput = nil; cameraInput = nil; audioInput = nil
 //        cameraPreview = nil
 //        cameraPreview?.session = nil
-        screenOutput = nil; cameraOutput = nil
+        videoOutput = nil; audioOutput = nil
+        self.isPrepared = false
     }
     
-    func setupRecorder(mediaSource: KOMediaSettings.MediaSource) {
-        if mediaSource.contains(.screen) {
+    func setup(propertiesManager: KOPropertiesDataManager?) {
+        self.propertiesManager = propertiesManager
+        self.setupRecorder()
+    }
+    
+    func setupRecorder() {
+        guard let sources = self.propertiesManager?.getSource() else { return }
+        if sources.contains(.screen) {
             screenCaptureSession = AVCaptureSession.init()
-            screenOutput = AVCaptureMovieFileOutput.init()
             screenInput = AVCaptureScreenInput.init(displayID: CGMainDisplayID())
         }
-        if mediaSource.contains(.camera) {
+        if sources.contains(.camera) {
             cameraCaptureSession = AVCaptureSession.init()
             cameraPreview = AVCaptureVideoPreviewLayer.init(session: cameraCaptureSession!)
             cameraPreview?.contentsGravity = .resize
@@ -59,51 +74,72 @@ class KOMultimediaRecorder : NSObject, AVCaptureFileOutputRecordingDelegate {
             if camera != nil {
                 cameraInput = try? AVCaptureDeviceInput.init(device: camera!)
             }
-            if !mediaSource.contains(.screen) {
-                cameraOutput = AVCaptureMovieFileOutput.init()
-            }
         }
-        if mediaSource.contains(.audio) {
+        if sources.contains(.audio) {
             microphone = AVCaptureDevice.default(for: .audio)
             if microphone != nil {
                 audioInput = try? AVCaptureDeviceInput.init(device: microphone!)
             }
         }
-        self.prepareForRecording()
+        videoOutput = AVCaptureVideoDataOutput.init()
+        audioOutput = AVCaptureAudioDataOutput.init()
+        self.prepareForRecording(sources: sources)
     }
     
-    func prepareForRecording() {
-        if screenCaptureSession != nil, screenInput != nil {
-//            screenCaptureSession?.beginConfiguration()
-//            if screenCaptureSession?.canSetSessionPreset(.hd4K3840x2160) == true {
-//                screenCaptureSession?.sessionPreset = .hd4K3840x2160
-//            }
+    func prepareForRecording(sources: KOMediaSettings.MediaSource) {
+//        var property = CMIOObjectPropertyAddress(mSelector: CMIOObjectPropertySelector(kCMIOHardwarePropertyAllowScreenCaptureDevices), mScope: CMIOObjectPropertyScope(kCMIOObjectPropertyScopeGlobal), mElement: CMIOObjectPropertyElement(kCMIOObjectPropertyElementMaster))
+//        var allow : UInt32 = 1
+//        let sizeOfAllow = MemoryLayout<UInt32>.size
+//        CMIOObjectSetPropertyData(CMIOObjectID(kCMIOObjectSystemObject), &property, 0, nil, UInt32(sizeOfAllow), &allow)
+        if sources.contains(.screen) {
+            screenCaptureSession?.beginConfiguration()
             if screenCaptureSession!.canAddInput(screenInput!) {
                 screenCaptureSession!.addInput(screenInput!)
             }
-            var displays : [CGDirectDisplayID] = []
-            var count : UInt32 = 0
             if audioInput != nil && screenCaptureSession!.canAddInput(audioInput!) {
                 screenCaptureSession!.addInput(audioInput!)
             }
-            if screenCaptureSession!.canAddOutput(screenOutput!) {
-                screenCaptureSession!.addOutput(screenOutput!)
+
+            videoOutput?.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String : kCVPixelFormatType_32BGRA]
+            videoOutput?.alwaysDiscardsLateVideoFrames = true
+            
+            let queue = DispatchQueue.init(label: "screen-queue")
+            
+            if screenCaptureSession!.canAddOutput(videoOutput!) {
+                videoOutput?.setSampleBufferDelegate(self, queue: queue)
+                screenCaptureSession!.addOutput(videoOutput!)
             }
-//            screenCaptureSession?.commitConfiguration()
+            if screenCaptureSession!.canAddOutput(audioOutput!) {
+                audioOutput?.setSampleBufferDelegate(self, queue: queue)
+                screenCaptureSession!.addOutput(audioOutput!)
+            }
+            screenCaptureSession?.commitConfiguration()
         }
-        if cameraCaptureSession != nil, cameraInput != nil {
+        if sources.contains(.camera) {
             if cameraCaptureSession!.canAddInput(cameraInput!) {
                 cameraCaptureSession!.addInput(cameraInput!)
             }
-            if cameraOutput != nil && audioInput != nil {
-                if cameraCaptureSession!.canAddInput(audioInput!) {
+            if !sources.contains(.screen) {
+                cameraCaptureSession?.beginConfiguration()
+                if audioInput != nil && cameraCaptureSession!.canAddInput(audioInput!) {
                     cameraCaptureSession!.addInput(audioInput!)
                 }
-                if cameraCaptureSession!.canAddOutput(cameraOutput!) {
-                    cameraCaptureSession!.addOutput(cameraOutput!)
+                
+                videoOutput?.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String : kCVPixelFormatType_32BGRA]
+                videoOutput?.alwaysDiscardsLateVideoFrames = true
+                
+                let queue = DispatchQueue.init(label: "camera-queue")
+                
+                if cameraCaptureSession!.canAddOutput(videoOutput!) {
+                    videoOutput?.setSampleBufferDelegate(self, queue: queue)
+                    cameraCaptureSession!.addOutput(videoOutput!)
                 }
+                if cameraCaptureSession!.canAddOutput(audioOutput!) {
+                    audioOutput?.setSampleBufferDelegate(self, queue: queue)
+                    cameraCaptureSession?.addOutput(audioOutput!)
+                }
+                cameraCaptureSession?.commitConfiguration()
             }
-            cameraCaptureSession?.commitConfiguration()
         }
         if FileManager.default.fileExists(atPath: recordingDest.path) {
             do {
@@ -113,31 +149,73 @@ class KOMultimediaRecorder : NSObject, AVCaptureFileOutputRecordingDelegate {
             }
         }
 //        DispatchQueue.global().async {
-            self.screenCaptureSession?.startRunning()
-            self.cameraCaptureSession?.startRunning()
+        self.screenCaptureSession?.startRunning()
+        self.cameraCaptureSession?.startRunning()
 //        }
     }
     
     func beginRecording() {
-        screenOutput?.startRecording(to: recordingDest, recordingDelegate: self)
-        cameraOutput?.startRecording(to: recordingDest, recordingDelegate: self)
+        assetWriter?.startWriting()
+        self.isRecording = true
     }
     
     func endRecording() {
-        screenOutput?.stopRecording()
-        cameraOutput?.stopRecording()
-    }
-    
-    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
-        if error != nil {
-            print("Error in recording :: ", error.debugDescription)
-        }
-        if output == screenOutput {
-            screenCaptureSession?.stopRunning()
-            cameraCaptureSession?.stopRunning()
-        } else if output == cameraOutput {
-            cameraCaptureSession?.stopRunning()
+        self.isRecording = false
+        assetWriter?.finishWriting {
+            
         }
     }
     
+}
+
+extension KOMultimediaRecorder : AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate {
+    
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        if !self.isPrepared && output == videoOutput {
+            self.prepareWriter(sampleBuffer: sampleBuffer)
+            self.isPrepared = true
+        }
+        guard CMSampleBufferDataIsReady(sampleBuffer), self.isRecording else { return }
+        if sessionAtSourceTime == nil {
+            sessionAtSourceTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+            assetWriter?.startSession(atSourceTime: sessionAtSourceTime!)
+        }
+        if output == videoOutput {
+            if videoWriterInput?.isReadyForMoreMediaData == true {
+                var buffer = sampleBuffer
+                if let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
+                    var image = CIImage.init(cvImageBuffer: imageBuffer)
+//                    image.cropped(to: CGRect.init(origin: .zero, size: CGSize.init(width: 200, height: 100)))
+                    image = image.applyingGaussianBlur(sigma: 2.0)
+                }
+                videoWriterInput?.append(sampleBuffer)
+            }
+        }
+        if output == audioOutput {
+            if audioWriterInput?.isReadyForMoreMediaData == true {
+                audioWriterInput?.append(sampleBuffer)
+            }
+        }
+    }
+    
+    func prepareWriter(sampleBuffer: CMSampleBuffer) {
+        var dimension = CGSize.init(width: NSScreen.main!.frame.size.width, height: NSScreen.main!.frame.size.height)
+        if let description = CMSampleBufferGetFormatDescription(sampleBuffer) {
+            let videoDimension = CMVideoFormatDescriptionGetDimensions(description)
+            dimension.width = CGFloat(videoDimension.width)
+            dimension.height = CGFloat(videoDimension.height)
+        }
+        assetWriter = try? AVAssetWriter.init(url: recordingDest, fileType: .mp4)
+        videoWriterInput = AVAssetWriterInput.init(mediaType: .video, outputSettings: [ AVVideoCodecKey: AVVideoCodecType.h264.rawValue, AVVideoWidthKey: dimension.width, AVVideoHeightKey: dimension.height, AVVideoCompressionPropertiesKey: [AVVideoAverageBitRateKey: 2300000]])
+        videoWriterInput?.expectsMediaDataInRealTime = true
+        if assetWriter!.canAdd(videoWriterInput!) {
+            assetWriter?.add(videoWriterInput!)
+        }
+        
+        audioWriterInput = AVAssetWriterInput.init(mediaType: .audio, outputSettings: [ AVFormatIDKey: kAudioFormatMPEG4AAC, AVNumberOfChannelsKey: 1, AVSampleRateKey: 44100, AVEncoderBitRateKey: 64000,])
+        audioWriterInput?.expectsMediaDataInRealTime = true
+        if assetWriter!.canAdd(audioWriterInput!) {
+            assetWriter?.add(audioWriterInput!)
+        }
+    }
 }

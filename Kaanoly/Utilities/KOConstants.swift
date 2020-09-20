@@ -8,23 +8,25 @@
 
 import Foundation
 
-enum CameraPreviewConstants {
+struct CameraPreviewConstants {
     
     enum Size {
-        static var small : CGFloat {
-            get {
-                return 300
-            }
-        }
-        static var medium : CGFloat {
-            get {
-                return 500
-            }
-        }
-        static var large : CGFloat {
-            get {
-                return 1000
-            }
-        }
+        static var defaultScale : CGFloat = 1/4
+        static var minScale : CGFloat = 1/6
+        static var maxScale : CGFloat = 2/5
+    }
+    
+    static var horizontalSpacing : CGFloat = 36
+    static var verticalSpacing : CGFloat = 24
+    
+    enum CursorPosition {
+        case top
+        case bottom
+        case left
+        case right
+        case topleft
+        case topright
+        case bottomleft
+        case bottomright
     }
 }

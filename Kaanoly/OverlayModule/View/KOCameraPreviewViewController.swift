@@ -13,8 +13,15 @@ class KOCameraPreviewViewController: NSViewController {
     var previewView : KOCameraPreviewMovableView = KOCameraPreviewMovableView.init()
     var colorProps = KOColorProperties.sharedInstance
     
+    var presenterDelegate : KOCameraPreviewPresenterDelegate?
+    
     init() {
         super.init(nibName: nil, bundle: nil)
+        self.presenterDelegate = KOCameraPreviewPresenter.init()
+    }
+    
+    func setup(propertiesManager: KOPropertiesDataManager?) {
+        self.presenterDelegate?.propertiesManager = propertiesManager
     }
     
     override func loadView() {
@@ -36,6 +43,7 @@ class KOCameraPreviewViewController: NSViewController {
     }
     
     func setupPreview() {
+        previewView.presenterDelegate = self.presenterDelegate
         previewView.wantsLayer = true
         let previewLayer = KORecordingCoordinator.sharedInstance.getPreviewLayer()
         previewView.layer = previewLayer
