@@ -33,6 +33,7 @@ class KOHomeViewController : NSViewController {
         self.setSourcePopup()
         self.setScreenPopup()
         self.setRecordingButton()
+        self.setMouseHighlighterCheckbox()
     }
     
     func setSourcePopup() {
@@ -106,5 +107,21 @@ class KOHomeViewController : NSViewController {
         } else {
             KORecordingCoordinator.sharedInstance.endRecording()
         }
+    }
+    
+    func setMouseHighlighterCheckbox() {
+        var mouseHighlighterOption = NSButton.init(title: "Enable Mouse Highlighter", target: self, action: #selector(toggleMouseHighlighter))
+        mouseHighlighterOption.setButtonType(.switch)
+        
+        self.view.addSubview(mouseHighlighterOption)
+        mouseHighlighterOption.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            mouseHighlighterOption.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 24),
+            mouseHighlighterOption.topAnchor.constraint(equalTo: self.startRecordingButton.bottomAnchor, constant: 24)
+        ])
+    }
+    
+    @objc func toggleMouseHighlighter(sender: NSButton) {
+        self.propertiesManager?.setCaptureMouseClick(sender.state == .on ? true : false)
     }
 }

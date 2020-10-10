@@ -36,6 +36,8 @@ class KOCameraPreviewViewController: NSViewController {
         super.viewDidLoad()
         self.view.wantsLayer = true
         self.view.layer?.backgroundColor = NSColor.black.cgColor
+        self.view.layer?.contents = NSImage.init(named: "CamreaPreviewBackground")
+        self.view.layer?.contentsGravity = .resize
         self.view.layer?.borderColor = colorProps.cameraPreviewBorderColor.cgColor
         self.view.layer?.borderWidth = 1
         self.view.layer?.cornerRadius = 4
@@ -56,10 +58,5 @@ class KOCameraPreviewViewController: NSViewController {
         newConstraints.append(previewView.topAnchor.constraint(equalTo: self.view.topAnchor))
         newConstraints.append(previewView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor))
         NSLayoutConstraint.activate(newConstraints)
-    }
-    
-    override func viewWillLayout() {
-        super.viewWillLayout()
-        self.previewView.layer?.frame = self.view.frame
     }
 }

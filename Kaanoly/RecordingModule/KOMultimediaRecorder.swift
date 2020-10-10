@@ -11,6 +11,7 @@ import AVFoundation
 import CoreMediaIO
 import AppKit
 import CoreGraphics
+import Vision
 
 class KOMultimediaRecorder : NSObject {
     
@@ -41,8 +42,14 @@ class KOMultimediaRecorder : NSObject {
     
     var isPrepared = false
     
+    var sequenceRequestHandler = VNSequenceRequestHandler.init()
+    var faceView = CALayer.init()
+    
     override init() {
         super.init()
+        faceView.backgroundColor = NSColor.clear.cgColor
+        faceView.borderColor = NSColor.red.cgColor
+        faceView.borderWidth = 2
     }
     
     func clearRecorder() {
@@ -61,10 +68,13 @@ class KOMultimediaRecorder : NSObject {
     }
     
     func setupRecorder() {
-        guard let sources = self.propertiesManager?.getSource() else { return }
+        guard let sources = self.propertiesManager?.getSource(), let displayId = self.propertiesManager?.getCurrentScreen()?.deviceDescription[NSDeviceDescriptionKey.init("NSScreenNumber")] as? CGDirectDisplayID else { return }
         if sources.contains(.screen) {
             screenCaptureSession = AVCaptureSession.init()
-            screenInput = AVCaptureScreenInput.init(displayID: CGMainDisplayID())
+            screenInput = AVCaptureScreenInput.init(displayID: displayId)
+            if let shouldCaptureMouseClick = self.propertiesManager?.shouldCaptureMouseClick() {
+                screenInput?.capturesMouseClicks = shouldCaptureMouseClick
+            }
         }
         if sources.contains(.camera) {
             cameraCaptureSession = AVCaptureSession.init()
@@ -182,11 +192,46 @@ extension KOMultimediaRecorder : AVCaptureVideoDataOutputSampleBufferDelegate, A
         }
         if output == videoOutput {
             if videoWriterInput?.isReadyForMoreMediaData == true {
-                var buffer = sampleBuffer
-                if let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
-                    var image = CIImage.init(cvImageBuffer: imageBuffer)
-//                    image.cropped(to: CGRect.init(origin: .zero, size: CGSize.init(width: 200, height: 100)))
-                    image = image.applyingGaussianBlur(sigma: 2.0)
+                if let imageBuffer : CVPixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
+//                    let request = VNDetectFaceRectanglesRequest.init { (request, error) in
+//                        DispatchQueue.main.async {
+//                            guard let results = request.results as? [VNFaceObservation], let result = results.first else {
+//                                self.faceView.removeFromSuperlayer()
+//                                return
+//                            }
+//                            let box = result.boundingBox
+//                            if self.faceView.superlayer == nil {
+//                                self.cameraPreview?.addSublayer(self.faceView)
+//                            }
+////                            self.faceView.frame = VNImageRectForNormalizedRect(box, CVPixelBufferGetWidth(imageBuffer), CVPixelBufferGetHeight(imageBuffer))
+//                            if let description = CMSampleBufferGetFormatDescription(sampleBuffer) {
+//                                let videoDimension = CMVideoFormatDescriptionGetDimensions(description)
+//                                var width = CGFloat(videoDimension.width)
+//                                var height = CGFloat(videoDimension.height)
+//                                let wScale = self.cameraPreview!.frame.width/width
+//                                let hScale = self.cameraPreview!.frame.height/height
+//                                let frame = VNImageRectForNormalizedRect(box, Int(videoDimension.width), Int(videoDimension.height))
+//                                width = frame.width
+//                                height = frame.height
+//                                if wScale == 0 || hScale == 0 {
+//                                    
+//                                }
+//                                self.faceView.frame = NSRect.init(x: width*box.origin.x, y: height*box.origin.y, width: width*box.width, height: height*box.height)
+//                            }
+////                            let width = CGFloat(CVPixelBufferGetWidth(imageBuffer))
+////                            let height = CGFloat(CVPixelBufferGetHeight(imageBuffer))
+////                            self.faceView.frame = NSRect.init(x: width*box.origin.x/(self.cameraPreview!.frame.width/width), y: height*box.origin.y/(self.cameraPreview!.frame.height/height), width: width*box.width/(self.cameraPreview!.frame.width/width), height: height*box.height/(self.cameraPreview!.frame.height/height))
+//                            print("Box >>>>>>>>>>> ", box )
+//                        }
+//                    }
+//                    do {
+//                        try sequenceRequestHandler.perform([request], on: imageBuffer)
+//                    } catch {
+//                        print(error.localizedDescription)
+//                    }
+//                    var image = CIImage.init(cvImageBuffer: imageBuffer)
+////                    image.cropped(to: CGRect.init(origin: .zero, size: CGSize.init(width: 200, height: 100)))
+//                    image = image.applyingGaussianBlur(sigma: 2.0)
                 }
                 videoWriterInput?.append(sampleBuffer)
             }
@@ -217,5 +262,11 @@ extension KOMultimediaRecorder : AVCaptureVideoDataOutputSampleBufferDelegate, A
         if assetWriter!.canAdd(audioWriterInput!) {
             assetWriter?.add(audioWriterInput!)
         }
+    }
+    
+    func convert(rect: CGRect) -> CGRect {
+      let origin = cameraPreview!.layerPointConverted(fromCaptureDevicePoint: rect.origin)
+        let size = cameraPreview!.layerPointConverted(fromCaptureDevicePoint: CGPoint.init(x: rect.size.width, y: rect.size.height))
+        return CGRect.init(origin: origin, size: CGSize.init(width: size.x-origin.x, height: size.y-origin.y))
     }
 }

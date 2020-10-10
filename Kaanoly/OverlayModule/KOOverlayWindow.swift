@@ -29,4 +29,16 @@ class KOOverlayWindow : NSWindow {
     override var canBecomeMain: Bool {
         return true
     }
+    
+    override func resignFirstResponder() -> Bool {
+        super.resignFirstResponder()
+    }
+    
+    override func resignKey() {
+        super.resignKey()
+    }
+    
+    override func resignMain() {
+        super.resignMain()
+    }
 }

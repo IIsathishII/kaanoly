@@ -15,7 +15,10 @@ protocol KOPropertiesDataManager : class {
     func getSource() -> KOMediaSettings.MediaSource
     func setSource(_ source: KOMediaSettings.MediaSource)
     
-    func getCurrentScreen() -> NSScreen
+    func getCurrentScreen() -> NSScreen?
     func setCurrentScreen(_ screen: NSScreen)
-    func getCurrentScreenFrame() -> NSRect
+    func getCurrentScreenFrame() -> NSRect?
+    
+    func shouldCaptureMouseClick() -> Bool
+    func setCaptureMouseClick(_ val: Bool)
 }

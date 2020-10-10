@@ -8,12 +8,13 @@
 
 import AppKit
 
-class KOPropertiesStore {
+class KOPropertiesStore : NSObject {
     
     weak var viewDelegate: KOWindowsCoordinatorDelegate?
-    
+
     private var source : KOMediaSettings.MediaSource = UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.source) as? KOMediaSettings.MediaSource ?? [.camera, .screen, .audio]
-    private var screen : NSScreen = NSScreen.screens[0]
+    private weak var screen : NSScreen? = NSScreen.screens[0]
+    private var captureMouseClick = false
 }
 
 extension KOPropertiesStore : KOPropertiesDataManager {
@@ -28,16 +29,25 @@ extension KOPropertiesStore : KOPropertiesDataManager {
         self.viewDelegate?.change(Source: source)
     }
     
-    func getCurrentScreen() -> NSScreen {
+    func getCurrentScreen() -> NSScreen? {
         return screen
     }
     
     func setCurrentScreen(_ screen: NSScreen) {
         self.screen = screen
+        KORecordingCoordinator.sharedInstance.modifyRecorder(propertiesManager: self)
         self.viewDelegate?.change(Screen: screen)
     }
     
-    func getCurrentScreenFrame() -> NSRect {
-        return screen.frame
+    func getCurrentScreenFrame() -> NSRect? {
+        return screen?.frame
+    }
+    
+    func shouldCaptureMouseClick() -> Bool {
+        return self.captureMouseClick
+    }
+    
+    func setCaptureMouseClick(_ val: Bool) {
+        self.captureMouseClick = val
     }
 }

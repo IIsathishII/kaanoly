@@ -40,6 +40,7 @@ class KOCameraPreviewMovableView : NSFlippedView {
         self.presenterDelegate?.setDiff(nil)
         self.presenterDelegate?.setHoldLoc(X: nil)
         self.presenterDelegate?.setHoldLoc(Y: nil)
+        self.setResizeCursor(pos: nil)
     }
     
     override func mouseDragged(with event: NSEvent) {
@@ -82,7 +83,6 @@ class KOCameraPreviewMovableView : NSFlippedView {
         super.mouseExited(with: event)
         if self.presenterDelegate?.getIsResizing() == false {
             self.setResizeCursor(pos: nil)
-            NSCursor.arrow.set()
         }
     }
     

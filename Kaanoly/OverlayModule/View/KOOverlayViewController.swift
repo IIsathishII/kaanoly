@@ -14,6 +14,7 @@ class KOOverlayViewController : NSViewController {
     var cameraPreviewView : NSView?
     
     var presenterDelegate : KOOverlayPresenterDelegate?
+    var cursorUtilitiesView = KOCursorUtilitiesView.init()
     
     override func loadView() {
         view = NSFlippedView.init()
@@ -22,11 +23,17 @@ class KOOverlayViewController : NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.wantsLayer = true
+        self.view.layer?.masksToBounds = true
         self.view.layer?.borderColor = NSColor.red.cgColor
         self.view.layer?.borderWidth = 2
         if let screenFrame = self.presenterDelegate?.propertiesManager?.getCurrentScreenFrame() {
             self.view.frame = NSRect.init(x: 0, y: 0, width: screenFrame.width, height: screenFrame.height)
         }
+        self.setupCursorUtilityView()
+    }
+    
+    override func viewDidAppear() {
+        super.viewDidAppear()
     }
     
     func setup(propertiesManager: KOPropertiesDataManager?) {
@@ -36,7 +43,17 @@ class KOOverlayViewController : NSViewController {
         self.presenterDelegate?.handleSourceChanged()
     }
     
-    
+    func setupCursorUtilityView() {
+        self.view.addSubview(self.cursorUtilitiesView)
+        self.cursorUtilitiesView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.cursorUtilitiesView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.cursorUtilitiesView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            self.cursorUtilitiesView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.cursorUtilitiesView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+        ])
+        self.view.sendSubviewToBack(self.cursorUtilitiesView)
+    }
 }
 
 extension KOOverlayViewController : KOOverlayViewDelegate {
@@ -101,8 +118,14 @@ extension KOOverlayViewController : KOOverlayViewDelegate {
         }
     }
     
+    func resizeCameraPreview(delX: CGFloat, delY: CGFloat, delWidth: CGFloat, delHeight: CGFloat) {
+        guard let previewFrame = self.cameraPreviewView?.frame else { return }
+        self.cameraPreviewView?.setFrameOrigin(NSPoint.init(x: previewFrame.origin.x+delX, y: previewFrame.origin.y+delY))
+        self.cameraPreviewView?.setFrameSize(NSSize.init(width: previewFrame.size.width+delWidth, height: previewFrame.size.height+delHeight))
+    }
+    
     func resizeCameraPreview(delX: CGFloat, delY: CGFloat) {
-        self.cameraPreviewView?.setFrameSize(NSSize.init(width: cameraPreviewView!.frame.size.width+delX, height: cameraPreviewView!.frame.size.height+delY))
+        
     }
 }
 
@@ -111,4 +134,8 @@ class NSFlippedView : NSView {
     override var isFlipped: Bool {
         return true
     }
+}
+
+class KOCursorUtilitiesView : NSFlippedView {
+    
 }

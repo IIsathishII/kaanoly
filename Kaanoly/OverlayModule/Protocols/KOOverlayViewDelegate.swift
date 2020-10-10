@@ -16,5 +16,5 @@ protocol KOOverlayViewDelegate : class {
     
     func moveCameraPreview(locX: CGFloat, locY: CGFloat, isAnimated: Bool)
     func adjustCameraPreviewStyle(isPinnedToCorner: Bool)
-    func resizeCameraPreview(delX: CGFloat, delY: CGFloat)
+    func resizeCameraPreview(delX: CGFloat, delY: CGFloat, delWidth: CGFloat, delHeight: CGFloat)
 }
