@@ -72,9 +72,7 @@ class KOMultimediaRecorder : NSObject {
         if sources.contains(.screen) {
             screenCaptureSession = AVCaptureSession.init()
             screenInput = AVCaptureScreenInput.init(displayID: displayId)
-            if let shouldCaptureMouseClick = self.propertiesManager?.shouldCaptureMouseClick() {
-                screenInput?.capturesMouseClicks = shouldCaptureMouseClick
-            }
+            self.setMouseHighlighterProp()
         }
         if sources.contains(.camera) {
             cameraCaptureSession = AVCaptureSession.init()
@@ -128,6 +126,7 @@ class KOMultimediaRecorder : NSObject {
         if sources.contains(.camera) {
             if cameraCaptureSession!.canAddInput(cameraInput!) {
                 cameraCaptureSession!.addInput(cameraInput!)
+                self.setMirroredProp()
             }
             if !sources.contains(.screen) {
                 cameraCaptureSession?.beginConfiguration()
@@ -268,5 +267,27 @@ extension KOMultimediaRecorder : AVCaptureVideoDataOutputSampleBufferDelegate, A
       let origin = cameraPreview!.layerPointConverted(fromCaptureDevicePoint: rect.origin)
         let size = cameraPreview!.layerPointConverted(fromCaptureDevicePoint: CGPoint.init(x: rect.size.width, y: rect.size.height))
         return CGRect.init(origin: origin, size: CGSize.init(width: size.x-origin.x, height: size.y-origin.y))
+    }
+    
+    func setMirroredProp() {
+        if let connection = cameraCaptureSession?.connections[0], let isMirrored = self.propertiesManager?.getIsMirrored() {
+            connection.automaticallyAdjustsVideoMirroring = false
+            connection.isVideoMirrored = isMirrored
+        }
+    }
+    
+    func setMouseHighlighterProp() {
+        if let shouldCaptureMouseClick = self.propertiesManager?.shouldCaptureMouseClick() {
+            screenInput?.capturesMouseClicks = shouldCaptureMouseClick
+        }
+    }
+    
+    func setSession(Props props: [KORecordingSessionProps]) {
+        if props.contains(.mirrored) {
+            self.setMirroredProp()
+        }
+        if props.contains(.mouseHighlighter) {
+            self.setMouseHighlighterProp()
+        }
     }
 }

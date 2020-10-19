@@ -89,12 +89,28 @@ extension KOCameraPreviewMovableView {
                 self.presenterDelegate?.setIsPinnedToCorner(false)
             }
             if self.presenterDelegate?.getIsPinnedToCorner() == false {
-                //TODO :: Sanitize del values. Will exceed screen bounds.
+                //TODO :: Check del values for part of screen cases.
                 delX = (loc.x - diffX)
                 delY = (loc.y - diffY)
                 isAnimated = true
-                self.presenterDelegate?.setHoldLoc(X: nil)
-                self.presenterDelegate?.setHoldLoc(Y: nil)
+                if viewRect.origin.x + delX >= screenFrame.origin.x + CameraPreviewConstants.horizontalSpacing && viewRect.origin.x + delX + viewRect.width <= screenFrame.origin.x + screenFrame.width-CameraPreviewConstants.horizontalSpacing {
+                    self.presenterDelegate?.setHoldLoc(X: nil)
+                } else {
+                    if viewRect.origin.x + delX >= screenFrame.origin.x + CameraPreviewConstants.horizontalSpacing {
+                        delX = screenFrame.origin.x+screenFrame.width-viewRect.width-CameraPreviewConstants.horizontalSpacing
+                    } else {
+                        delX = -(viewRect.origin.x-CameraPreviewConstants.horizontalSpacing)
+                    }
+                }
+                if viewRect.origin.y + delY >= screenFrame.origin.y + CameraPreviewConstants.verticalSpacing && viewRect.origin.y + delY + viewRect.height <= screenFrame.origin.y + screenFrame.height - CameraPreviewConstants.verticalSpacing {
+                    self.presenterDelegate?.setHoldLoc(Y: nil)
+                } else {
+                    if viewRect.origin.y + delY >= screenFrame.origin.y + CameraPreviewConstants.verticalSpacing {
+                        delY = screenFrame.origin.y+screenFrame.height-viewRect.height-CameraPreviewConstants.verticalSpacing
+                    } else {
+                        delY = -(viewRect.origin.y-CameraPreviewConstants.verticalSpacing)
+                    }
+                }
             }
         }
         viewRect.origin.x -= screenFrame.origin.x

@@ -13,8 +13,14 @@ class KOHomeViewController : NSViewController {
 
     var startRecordingButton = NSButton.init()
     var isRecording = false
+    var mouseHighlighterOption = NSButton.init(title: "Enable Mouse Highlighter", target: self, action: #selector(toggleMouseHighlighter))
+    var mirroredOption = NSButton.init(title: "Mirror Video", target: self, action: #selector(toggleMirror))
     
-    weak var propertiesManager : KOPropertiesDataManager?
+    weak var propertiesManager : KOPropertiesDataManager? {
+        didSet {
+            self.setProperties()
+        }
+    }
     
     override func loadView() {
         self.view = NSView.init()
@@ -34,6 +40,7 @@ class KOHomeViewController : NSViewController {
         self.setScreenPopup()
         self.setRecordingButton()
         self.setMouseHighlighterCheckbox()
+        self.setMirroredCheckbox()
     }
     
     func setSourcePopup() {
@@ -110,7 +117,6 @@ class KOHomeViewController : NSViewController {
     }
     
     func setMouseHighlighterCheckbox() {
-        var mouseHighlighterOption = NSButton.init(title: "Enable Mouse Highlighter", target: self, action: #selector(toggleMouseHighlighter))
         mouseHighlighterOption.setButtonType(.switch)
         
         self.view.addSubview(mouseHighlighterOption)
@@ -121,7 +127,27 @@ class KOHomeViewController : NSViewController {
         ])
     }
     
+    func setMirroredCheckbox() {
+        self.mirroredOption.setButtonType(.switch)
+        
+        self.view.addSubview(self.mirroredOption)
+        self.mirroredOption.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            mirroredOption.leadingAnchor.constraint(equalTo: self.mouseHighlighterOption.leadingAnchor),
+            mirroredOption.topAnchor.constraint(equalTo: self.mouseHighlighterOption.bottomAnchor, constant: 12)
+        ])
+    }
+    
     @objc func toggleMouseHighlighter(sender: NSButton) {
         self.propertiesManager?.setCaptureMouseClick(sender.state == .on ? true : false)
+    }
+    
+    @objc func toggleMirror(sender: NSButton) {
+        self.propertiesManager?.setIsMirrored(sender.state == .on ? true : false)
+    }
+    
+    func setProperties() {
+        self.mouseHighlighterOption.state = self.propertiesManager?.shouldCaptureMouseClick() == true ? .on : .off
+        self.mirroredOption.state = self.propertiesManager?.getIsMirrored() == true ? .on : .off
     }
 }

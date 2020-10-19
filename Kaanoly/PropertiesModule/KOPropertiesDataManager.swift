@@ -21,4 +21,7 @@ protocol KOPropertiesDataManager : class {
     
     func shouldCaptureMouseClick() -> Bool
     func setCaptureMouseClick(_ val: Bool)
+    
+    func getIsMirrored() -> Bool
+    func setIsMirrored(_ val: Bool)
 }

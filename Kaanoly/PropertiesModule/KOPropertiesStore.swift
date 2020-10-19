@@ -15,6 +15,7 @@ class KOPropertiesStore : NSObject {
     private var source : KOMediaSettings.MediaSource = UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.source) as? KOMediaSettings.MediaSource ?? [.camera, .screen, .audio]
     private weak var screen : NSScreen? = NSScreen.screens[0]
     private var captureMouseClick = false
+    private var isMirrored = true
 }
 
 extension KOPropertiesStore : KOPropertiesDataManager {
@@ -49,5 +50,15 @@ extension KOPropertiesStore : KOPropertiesDataManager {
     
     func setCaptureMouseClick(_ val: Bool) {
         self.captureMouseClick = val
+        KORecordingCoordinator.sharedInstance.setSession(Props: [.mouseHighlighter])
+    }
+    
+    func getIsMirrored() -> Bool {
+        return self.isMirrored
+    }
+    
+    func setIsMirrored(_ val: Bool) {
+        self.isMirrored = val
+        KORecordingCoordinator.sharedInstance.setSession(Props: [.mirrored])
     }
 }

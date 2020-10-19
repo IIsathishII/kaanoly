@@ -31,6 +31,7 @@
 		88A34F7D24A733BF002DF00F /* KORecordingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7A24A733BF002DF00F /* KORecordingCoordinator.swift */; };
 		88A34F8024A733C6002DF00F /* KOColorProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7E24A733C6002DF00F /* KOColorProperties.swift */; };
 		88A34F8124A733C6002DF00F /* KOConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A34F7F24A733C6002DF00F /* KOConstants.swift */; };
+		88D8829B253E1D4300E24BD7 /* KORecordingSessionProps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D8829A253E1D4300E24BD7 /* KORecordingSessionProps.swift */; };
 		88F531A72482E93100B11309 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F531A62482E93100B11309 /* AppDelegate.swift */; };
 		88F531AB2482E93100B11309 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88F531AA2482E93100B11309 /* Assets.xcassets */; };
 		88F531AE2482E93100B11309 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88F531AD2482E93100B11309 /* Preview Assets.xcassets */; };
@@ -62,6 +63,7 @@
 		88A34F7A24A733BF002DF00F /* KORecordingCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KORecordingCoordinator.swift; sourceTree = "<group>"; };
 		88A34F7E24A733C6002DF00F /* KOColorProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOColorProperties.swift; sourceTree = "<group>"; };
 		88A34F7F24A733C6002DF00F /* KOConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOConstants.swift; sourceTree = "<group>"; };
+		88D8829A253E1D4300E24BD7 /* KORecordingSessionProps.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KORecordingSessionProps.swift; sourceTree = "<group>"; };
 		88F531A32482E93100B11309 /* Kaanoly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kaanoly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88F531A62482E93100B11309 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		88F531AA2482E93100B11309 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				88A34F7924A733BF002DF00F /* KOMediaSettingConstants.swift */,
 				88A34F7824A733BF002DF00F /* KOMultimediaRecorder.swift */,
 				88A34F7A24A733BF002DF00F /* KORecordingCoordinator.swift */,
+				88D8829A253E1D4300E24BD7 /* KORecordingSessionProps.swift */,
 			);
 			path = RecordingModule;
 			sourceTree = "<group>";
@@ -291,6 +294,7 @@
 				884EEBDF2517AF9300168F9E /* KOCameraPreviewViewController.swift in Sources */,
 				884EEBE42517AF9300168F9E /* KOOverlayViewDelegate.swift in Sources */,
 				884EEBDD2517AF9300168F9E /* KOCameraPreviewMovableView.swift in Sources */,
+				88D8829B253E1D4300E24BD7 /* KORecordingSessionProps.swift in Sources */,
 				884EEBDE2517AF9300168F9E /* KOCameraPreviewMovableViewDragExtension.swift in Sources */,
 				889F7A6425326A8500D7DFBC /* KOClassExtensions.swift in Sources */,
 				884EEBE92517AFB200168F9E /* KOUserDefaultKeyConstants.swift in Sources */,

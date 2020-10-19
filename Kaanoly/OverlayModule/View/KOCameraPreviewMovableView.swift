@@ -67,13 +67,13 @@ class KOCameraPreviewMovableView : NSFlippedView {
         } else if ((loc.y <= self.frame.origin.y + self.frame.height &&  loc.y >= self.frame.origin.y + self.frame.height - cornerSpacing) && (loc.x >= self.frame.origin.x && loc.x <= self.frame.origin.x + cornerSpacing)) {
             self.setResizeCursor(pos: .bottomleft)
         } else if (loc.y >= self.frame.origin.y && loc.y <= self.frame.origin.y + lateralSpacing) {
-            self.setResizeCursor(pos: .top)
+//            self.setResizeCursor(pos: .top)
         } else if (loc.y <= self.frame.origin.y + self.frame.height &&  loc.y >= self.frame.origin.y + self.frame.height - lateralSpacing) {
-            self.setResizeCursor(pos: .bottom)
+//            self.setResizeCursor(pos: .bottom)
         } else if (loc.x >= self.frame.origin.x && loc.x <= self.frame.origin.x + lateralSpacing) {
-            self.setResizeCursor(pos: .left)
+//            self.setResizeCursor(pos: .left)
         } else if (loc.x <= self.frame.origin.x + self.frame.width && loc.x >= self.frame.origin.x + self.frame.width - lateralSpacing) {
-            self.setResizeCursor(pos: .right)
+//            self.setResizeCursor(pos: .right)
         } else {
             self.setResizeCursor(pos: nil)
         }

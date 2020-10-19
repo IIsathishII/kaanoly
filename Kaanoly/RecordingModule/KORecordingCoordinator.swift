@@ -58,4 +58,8 @@ class KORecordingCoordinator {
         let dim = CMVideoFormatDescriptionGetDimensions((KORecordingCoordinator.sharedInstance.recorder!.cameraCaptureSession?.inputs[0] as! AVCaptureDeviceInput).device.activeFormat.formatDescription)
         return (Int(dim.width), Int(dim.height))
     }
+    
+    func setSession(Props props: [KORecordingSessionProps]) {
+        KORecordingCoordinator.sharedInstance.recorder?.setSession(Props: props)
+    }
 }
