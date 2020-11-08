@@ -19,12 +19,20 @@ class KOHomeWindow : NSWindow {
         self.center()
     }
     
-    func setup(propertiesManager: KOPropertiesDataManager?) {
+    func setup(propertiesManager: KOPropertiesDataManager?, coordinatorDelegate: KOWindowsCoordinatorDelegate?) {
         self.homeViewController.propertiesManager = propertiesManager
+        self.homeViewController.viewDelegate = coordinatorDelegate
     }
     
     override func close() {
         super.close()
+        if !self.homeViewController.isRecording {
+            self.handleWindowClose()
+        }
+    }
+    
+    func handleWindowClose() {
+        self.homeViewController.propertiesManager?.getStorageDirectory()?.stopAccessingSecurityScopedResource()
         KORecordingCoordinator.sharedInstance.destroyRecorder()
     }
 }

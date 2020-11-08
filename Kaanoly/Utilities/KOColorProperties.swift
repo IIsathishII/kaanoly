@@ -9,11 +9,15 @@
 import Foundation
 import AppKit
 
-class KOColorProperties {
+enum KOStyleProperties {
     
-    static let sharedInstance = KOColorProperties.init()
+    enum Color {
+        
+        static let cameraPreviewBorderColor : NSColor = NSColor.yellow
+        
+        //Part Of Screen Picker Window
+        static let acceptButtonColor : NSColor = NSColor.init(red: 39/255, green: 167/255, blue: 69/255, alpha: 1.0)
+    }
     
-    private init() {}
     
-    var cameraPreviewBorderColor : NSColor = NSColor.yellow
 }

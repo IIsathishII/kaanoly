@@ -112,9 +112,11 @@ extension KOOverlayViewController : KOOverlayViewDelegate {
     
     func adjustCameraPreviewStyle(isPinnedToCorner: Bool) {
         if isPinnedToCorner {
-            self.cameraPreviewView?.layer?.cornerRadius = 0
+            self.cameraPreviewController?.removeCornerRadius()
+//            self.cameraPreviewView?.layer?.cornerRadius = 0
         } else {
-            self.cameraPreviewView?.layer?.cornerRadius = 4
+            self.cameraPreviewController?.setCornerRadius()
+//            self.cameraPreviewView?.layer?.cornerRadius = self.cameraPreviewController!.cornerRadius
         }
     }
     

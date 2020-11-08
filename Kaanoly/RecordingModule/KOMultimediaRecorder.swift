@@ -32,7 +32,7 @@ class KOMultimediaRecorder : NSObject {
     var videoOutput : AVCaptureVideoDataOutput?
     var audioOutput : AVCaptureAudioDataOutput?
     
-    let recordingDest = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("final.mov")
+    var recordingDest : URL = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("final.mov")
     
     var assetWriter : AVAssetWriter?
     var isRecording = false
@@ -64,6 +64,14 @@ class KOMultimediaRecorder : NSObject {
     
     func setup(propertiesManager: KOPropertiesDataManager?) {
         self.propertiesManager = propertiesManager
+        if let url = self.propertiesManager?.getStorageDirectory() {
+            let formatter = DateFormatter.init()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .medium
+            let dateTime = formatter.string(from: Date.init())
+            url.startAccessingSecurityScopedResource()
+            self.recordingDest = url.appendingPathComponent("Xplnr Video Message \(dateTime).mov")
+        }
         self.setupRecorder()
     }
     
@@ -72,6 +80,9 @@ class KOMultimediaRecorder : NSObject {
         if sources.contains(.screen) {
             screenCaptureSession = AVCaptureSession.init()
             screenInput = AVCaptureScreenInput.init(displayID: displayId)
+//            if let croppedRect = self.propertiesManager?.getCroppedRect(), let screen = self.propertiesManager?.getCurrentScreen() {
+//                screenInput?.cropRect = NSRect.init(x: 0, y: screen.frame.height-croppedRect.height, width: croppedRect.width, height: croppedRect.height)
+//            }
             self.setMouseHighlighterProp()
         }
         if sources.contains(.camera) {
@@ -171,7 +182,18 @@ class KOMultimediaRecorder : NSObject {
     func endRecording() {
         self.isRecording = false
         assetWriter?.finishWriting {
-            
+            if self.assetWriter?.status == .failed || self.assetWriter?.status == .cancelled {
+                if FileManager.default.fileExists(atPath: self.recordingDest.path) {
+                    do {
+                        try FileManager.default.removeItem(at: self.recordingDest)
+                    } catch {
+                        print("Error deleting existing file")
+                    }
+                }
+                return
+            }
+            self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
+//            self.propertiesManager?.getStorageDirectory()?.stopAccessingSecurityScopedResource()
         }
     }
     

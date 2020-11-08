@@ -16,11 +16,16 @@ class KOHomeViewController : NSViewController {
     var mouseHighlighterOption = NSButton.init(title: "Enable Mouse Highlighter", target: self, action: #selector(toggleMouseHighlighter))
     var mirroredOption = NSButton.init(title: "Mirror Video", target: self, action: #selector(toggleMirror))
     
+    var openButton = NSButton.init(title: " Open Location... ", target: self, action: #selector(selectFolderLocation))
+    var sourceList = NSPopUpButton.init(frame: .zero, pullsDown: false)
+    
     weak var propertiesManager : KOPropertiesDataManager? {
         didSet {
             self.setProperties()
         }
     }
+    
+    weak var viewDelegate : KOWindowsCoordinatorDelegate?
     
     override func loadView() {
         self.view = NSView.init()
@@ -36,6 +41,7 @@ class KOHomeViewController : NSViewController {
     
     override func viewDidLoad() {
         self.preferredContentSize = NSSize.init(width: 400, height: 300)
+        self.setOpenButton()
         self.setSourcePopup()
         self.setScreenPopup()
         self.setRecordingButton()
@@ -43,8 +49,27 @@ class KOHomeViewController : NSViewController {
         self.setMirroredCheckbox()
     }
     
+    @objc func selectFolderLocation() {
+        let openPanel = NSOpenPanel.init()
+        openPanel.canCreateDirectories = true
+        openPanel.canChooseDirectories = true
+        openPanel.canChooseFiles = false
+//        openPanel.level = self.view.window!.level
+        let response = openPanel.runModal()
+        self.propertiesManager?.setStorageDirectory(openPanel.url!)
+        print("Response :::: ", response)
+    }
+    
+    func setOpenButton() {
+        openButton.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(openButton)
+        NSLayoutConstraint.activate([
+            openButton.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 24),
+            openButton.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 24)
+        ])
+    }
+    
     func setSourcePopup() {
-        var sourceList = NSPopUpButton.init(frame: .zero, pullsDown: false)
         sourceList.target = self
         sourceList.action = #selector(selectSource(_:))
         sourceList.addItems(withTitles: ["Camera+Screen", "Screen", "Camera"])
@@ -52,7 +77,7 @@ class KOHomeViewController : NSViewController {
         sourceList.translatesAutoresizingMaskIntoConstraints = false
         var newConstraints = [NSLayoutConstraint]()
         newConstraints.append(sourceList.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 24))
-        newConstraints.append(sourceList.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 48))
+        newConstraints.append(sourceList.topAnchor.constraint(equalTo: self.openButton.bottomAnchor, constant: 18))
         NSLayoutConstraint.activate(newConstraints)
     }
     
@@ -62,14 +87,15 @@ class KOHomeViewController : NSViewController {
         screenList.action = #selector(selectScreen(_:))
         var screenNames = [String]()
         for i in 0..<NSScreen.screens.count {
-            screenNames.append("Screen \(i)")
+            screenNames.append("Screen \(i+1)" + (NSScreen.screens[i].getDeviceName() != nil ? " (\(NSScreen.screens[i].getDeviceName()!))" : ""))
         }
         screenList.addItems(withTitles: screenNames)
+        screenList.addItem(withTitle: "Part of Screen")
         self.view.addSubview(screenList)
         screenList.translatesAutoresizingMaskIntoConstraints = false
         var newConstraints = [NSLayoutConstraint]()
         newConstraints.append(screenList.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 24))
-        newConstraints.append(screenList.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 96))
+        newConstraints.append(screenList.topAnchor.constraint(equalTo: self.sourceList.bottomAnchor, constant: 18))
         NSLayoutConstraint.activate(newConstraints)
     }
     
@@ -85,8 +111,12 @@ class KOHomeViewController : NSViewController {
     }
     
     @objc func selectScreen(_ sender: NSPopUpButton) {
-        let index = sender.indexOfSelectedItem
-        self.propertiesManager?.setCurrentScreen(NSScreen.screens[index])
+        if sender.indexOfSelectedItem == sender.itemArray.count-1 {
+            self.viewDelegate?.openPartOfScreenPicker()
+        } else {
+            let index = sender.indexOfSelectedItem
+            self.propertiesManager?.setCurrentScreen(NSScreen.screens[index])
+        }
     }
     
     func setRecordingButton() {
@@ -106,8 +136,8 @@ class KOHomeViewController : NSViewController {
     @objc func beginRecording() {
 //        guard let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? NSArray else { return }
 //        print(windowList)
-        
         self.isRecording = !self.isRecording
+        self.viewDelegate?.beginRecording()
         self.startRecordingButton.title = self.isRecording ? "End Recording!" : "Start Recording..."
         if self.isRecording {
             KORecordingCoordinator.sharedInstance.beginRecording()

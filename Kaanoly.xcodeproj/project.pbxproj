@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8836D2ED25588EBD00530931 /* KOPartOfScreenPickerWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836D2EA25588EBD00530931 /* KOPartOfScreenPickerWindow.swift */; };
+		8836D2EE25588EBD00530931 /* KOPartOfScreenSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836D2EB25588EBD00530931 /* KOPartOfScreenSelectionView.swift */; };
+		8836D2EF25588EBD00530931 /* KOPartOfScreenPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836D2EC25588EBD00530931 /* KOPartOfScreenPickerViewController.swift */; };
+		8836D2F325588ECD00530931 /* KORecentLocalVideosMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836D2F225588ECD00530931 /* KORecentLocalVideosMenuView.swift */; };
+		8836D2F825588EFE00530931 /* KOCircularImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836D2F525588EFE00530931 /* KOCircularImageButton.swift */; };
+		8836D2F925588EFE00530931 /* KOObjectSubscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836D2F625588EFE00530931 /* KOObjectSubscriber.swift */; };
+		8836D2FA25588EFE00530931 /* KOUtilityClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836D2F725588EFE00530931 /* KOUtilityClasses.swift */; };
 		884EEBCD2517AF8300168F9E /* KOPropertiesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBCB2517AF8300168F9E /* KOPropertiesStore.swift */; };
 		884EEBCE2517AF8300168F9E /* KOPropertiesDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBCC2517AF8300168F9E /* KOPropertiesDataManager.swift */; };
 		884EEBDD2517AF9300168F9E /* KOCameraPreviewMovableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBD12517AF9300168F9E /* KOCameraPreviewMovableView.swift */; };
@@ -39,6 +46,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8836D2EA25588EBD00530931 /* KOPartOfScreenPickerWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOPartOfScreenPickerWindow.swift; sourceTree = "<group>"; };
+		8836D2EB25588EBD00530931 /* KOPartOfScreenSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOPartOfScreenSelectionView.swift; sourceTree = "<group>"; };
+		8836D2EC25588EBD00530931 /* KOPartOfScreenPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOPartOfScreenPickerViewController.swift; sourceTree = "<group>"; };
+		8836D2F225588ECD00530931 /* KORecentLocalVideosMenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KORecentLocalVideosMenuView.swift; sourceTree = "<group>"; };
+		8836D2F525588EFE00530931 /* KOCircularImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCircularImageButton.swift; sourceTree = "<group>"; };
+		8836D2F625588EFE00530931 /* KOObjectSubscriber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOObjectSubscriber.swift; sourceTree = "<group>"; };
+		8836D2F725588EFE00530931 /* KOUtilityClasses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOUtilityClasses.swift; sourceTree = "<group>"; };
 		884EEBCB2517AF8300168F9E /* KOPropertiesStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOPropertiesStore.swift; sourceTree = "<group>"; };
 		884EEBCC2517AF8300168F9E /* KOPropertiesDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOPropertiesDataManager.swift; sourceTree = "<group>"; };
 		884EEBD12517AF9300168F9E /* KOCameraPreviewMovableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewMovableView.swift; sourceTree = "<group>"; };
@@ -84,6 +98,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8836D2E925588EAF00530931 /* PartOfScreenPickerModule */ = {
+			isa = PBXGroup;
+			children = (
+				8836D2EC25588EBD00530931 /* KOPartOfScreenPickerViewController.swift */,
+				8836D2EA25588EBD00530931 /* KOPartOfScreenPickerWindow.swift */,
+				8836D2EB25588EBD00530931 /* KOPartOfScreenSelectionView.swift */,
+			);
+			path = PartOfScreenPickerModule;
+			sourceTree = "<group>";
+		};
+		8836D2F125588EC500530931 /* Menu */ = {
+			isa = PBXGroup;
+			children = (
+				8836D2F225588ECD00530931 /* KORecentLocalVideosMenuView.swift */,
+			);
+			path = Menu;
+			sourceTree = "<group>";
+		};
 		884EEBC82517ADEB00168F9E /* PropertiesModule */ = {
 			isa = PBXGroup;
 			children = (
@@ -131,6 +163,9 @@
 				88A34F7E24A733C6002DF00F /* KOColorProperties.swift */,
 				88A34F7F24A733C6002DF00F /* KOConstants.swift */,
 				889F7A6325326A8500D7DFBC /* KOClassExtensions.swift */,
+				8836D2F525588EFE00530931 /* KOCircularImageButton.swift */,
+				8836D2F625588EFE00530931 /* KOObjectSubscriber.swift */,
+				8836D2F725588EFE00530931 /* KOUtilityClasses.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -194,6 +229,8 @@
 		88F531A52482E93100B11309 /* Kaanoly */ = {
 			isa = PBXGroup;
 			children = (
+				8836D2F125588EC500530931 /* Menu */,
+				8836D2E925588EAF00530931 /* PartOfScreenPickerModule */,
 				884EEBC82517ADEB00168F9E /* PropertiesModule */,
 				88A34F6524A732F4002DF00F /* OverlayModule */,
 				88A34F6424A732E9002DF00F /* HomeModule */,
@@ -294,10 +331,13 @@
 				884EEBDF2517AF9300168F9E /* KOCameraPreviewViewController.swift in Sources */,
 				884EEBE42517AF9300168F9E /* KOOverlayViewDelegate.swift in Sources */,
 				884EEBDD2517AF9300168F9E /* KOCameraPreviewMovableView.swift in Sources */,
+				8836D2EF25588EBD00530931 /* KOPartOfScreenPickerViewController.swift in Sources */,
 				88D8829B253E1D4300E24BD7 /* KORecordingSessionProps.swift in Sources */,
 				884EEBDE2517AF9300168F9E /* KOCameraPreviewMovableViewDragExtension.swift in Sources */,
 				889F7A6425326A8500D7DFBC /* KOClassExtensions.swift in Sources */,
+				8836D2F825588EFE00530931 /* KOCircularImageButton.swift in Sources */,
 				884EEBE92517AFB200168F9E /* KOUserDefaultKeyConstants.swift in Sources */,
+				8836D2F325588ECD00530931 /* KORecentLocalVideosMenuView.swift in Sources */,
 				88A34F7D24A733BF002DF00F /* KORecordingCoordinator.swift in Sources */,
 				88A34F7724A733B8002DF00F /* KOWindowsCoordinator.swift in Sources */,
 				88A34F8024A733C6002DF00F /* KOColorProperties.swift in Sources */,
@@ -310,10 +350,14 @@
 				884EEBE02517AF9300168F9E /* KOCameraPreviewMovableViewResizeExtension.swift in Sources */,
 				88A34F8124A733C6002DF00F /* KOConstants.swift in Sources */,
 				88F531A72482E93100B11309 /* AppDelegate.swift in Sources */,
+				8836D2F925588EFE00530931 /* KOObjectSubscriber.swift in Sources */,
+				8836D2FA25588EFE00530931 /* KOUtilityClasses.swift in Sources */,
+				8836D2EE25588EBD00530931 /* KOPartOfScreenSelectionView.swift in Sources */,
 				884EEBCD2517AF8300168F9E /* KOPropertiesStore.swift in Sources */,
 				884EEBE52517AF9300168F9E /* KOOverlayPresenter.swift in Sources */,
 				884EEBE62517AF9300168F9E /* KOCameraPreviewPresenter.swift in Sources */,
 				88A34F7224A733B1002DF00F /* KOHomeViewController.swift in Sources */,
+				8836D2ED25588EBD00530931 /* KOPartOfScreenPickerWindow.swift in Sources */,
 				884EEBCE2517AF8300168F9E /* KOPropertiesDataManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

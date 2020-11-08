@@ -24,7 +24,7 @@ class KOCameraPreviewMovableView : NSFlippedView {
     }
     
     func setResizeTrackingArea() {
-        let trackingArea = NSTrackingArea.init(rect: self.bounds, options: [.activeInActiveApp, .mouseMoved, .mouseEnteredAndExited, .inVisibleRect], owner: self, userInfo: nil)
+        let trackingArea = NSTrackingArea.init(rect: self.bounds, options: [.activeAlways, .mouseMoved, .mouseEnteredAndExited, .inVisibleRect], owner: self, userInfo: nil)
         self.addTrackingArea(trackingArea)
     }
     
@@ -107,5 +107,4 @@ class KOCameraPreviewMovableView : NSFlippedView {
             self.presenterDelegate?.setIsResizing(false)
         }
     }
-
 }

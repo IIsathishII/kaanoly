@@ -11,9 +11,10 @@ import AppKit
 class KOCameraPreviewViewController: NSViewController {
     
     var previewView : KOCameraPreviewMovableView = KOCameraPreviewMovableView.init()
-    var colorProps = KOColorProperties.sharedInstance
     
     var presenterDelegate : KOCameraPreviewPresenterDelegate?
+    
+    let cornerRadius = CGFloat(4)
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -38,15 +39,16 @@ class KOCameraPreviewViewController: NSViewController {
         self.view.layer?.backgroundColor = NSColor.black.cgColor
         self.view.layer?.contents = NSImage.init(named: "CamreaPreviewBackground")
         self.view.layer?.contentsGravity = .resize
-        self.view.layer?.borderColor = colorProps.cameraPreviewBorderColor.cgColor
+        self.view.layer?.borderColor = KOStyleProperties.Color.cameraPreviewBorderColor.cgColor
         self.view.layer?.borderWidth = 1
-        self.view.layer?.cornerRadius = 4
+        self.setCornerRadius()
         self.setupPreview()
     }
     
     func setupPreview() {
         previewView.presenterDelegate = self.presenterDelegate
         previewView.wantsLayer = true
+        previewView.layer?.backgroundColor = NSColor.black.cgColor
         let previewLayer = KORecordingCoordinator.sharedInstance.getPreviewLayer()
         previewView.layer = previewLayer
         previewLayer?.frame = previewView.frame
@@ -58,5 +60,13 @@ class KOCameraPreviewViewController: NSViewController {
         newConstraints.append(previewView.topAnchor.constraint(equalTo: self.view.topAnchor))
         newConstraints.append(previewView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor))
         NSLayoutConstraint.activate(newConstraints)
+    }
+    
+    func removeCornerRadius() {
+        self.view.layer?.cornerRadius = 0
+    }
+    
+    func setCornerRadius() {
+        self.view.layer?.cornerRadius = cornerRadius
     }
 }

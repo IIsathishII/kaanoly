@@ -11,4 +11,8 @@ import Foundation
 struct KOUserDefaultKeyConstants {
     
     static var source = "KOUserDefaultKeyConstants.source"
+    static var captureMouseClick = "KOUserDefaultKeyConstants.captureMouseClick"
+    static var mirrorCamera = "KOUserDefaultKeyConstants.mirrorCamera"
+    static var storageDirectory = "KOUserDefaultKeyConstants.storageDirectory"
+    static var recentVideos = "KOUserDefaultKeyConstants.recentVideos"
 }

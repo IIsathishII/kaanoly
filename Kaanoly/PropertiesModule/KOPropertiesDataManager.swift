@@ -12,6 +12,9 @@ protocol KOPropertiesDataManager : class {
     
     var viewDelegate: KOWindowsCoordinatorDelegate? { get set }
     
+    func getStorageDirectory() -> URL?
+    func setStorageDirectory(_ val: URL)
+    
     func getSource() -> KOMediaSettings.MediaSource
     func setSource(_ source: KOMediaSettings.MediaSource)
     
@@ -24,4 +27,10 @@ protocol KOPropertiesDataManager : class {
     
     func getIsMirrored() -> Bool
     func setIsMirrored(_ val: Bool)
+    
+    func bookmarkRecording(Path path: URL)
+    func getRecentVideos() -> [URL]
+    
+    func setCropped(Rect rect: NSRect?, displayId: CGDirectDisplayID)
+    func getCroppedRect() -> NSRect?
 }
