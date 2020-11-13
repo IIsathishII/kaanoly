@@ -25,9 +25,13 @@ class KOCircularImageButton : NSButton {
     }
     
     override func draw(_ dirtyRect: NSRect) {
-        let path = NSBezierPath.init(ovalIn: dirtyRect)
+        let path = NSBezierPath.init(ovalIn: dirtyRect.insetBy(dx: 1, dy: 1))
         self.color.setFill()
         path.fill()
+        
+        self.color.withAlphaComponent(0.4).setStroke()
+        path.lineWidth = 1
+        path.stroke()
         
         self.image?.draw(in: dirtyRect)
     }

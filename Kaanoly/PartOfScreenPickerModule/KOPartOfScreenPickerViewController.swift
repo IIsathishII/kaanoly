@@ -11,7 +11,7 @@ import AppKit
 class KOPartOfScreenPickerViewController : NSViewController {
     
     weak var propertiesManager : KOPropertiesDataManager?
-    var dimView = NSFlippedView.init()
+    var dimView = KOPartOfScreenPickerView.init()
     var trackingArea : NSTrackingArea!
 
     var screenMask = CAShapeLayer.init()
@@ -117,5 +117,12 @@ extension KOPartOfScreenPickerViewController : KOPartOfScreenSelectionViewDelega
     
     func selectionAreaSelected() {
         self.propertiesManager?.setCropped(Rect: self.cropRect, displayId: (self.view.window as! KOPartOfScreenPickerWindow).displayId)
+    }
+}
+
+class KOPartOfScreenPickerView : NSFlippedView {
+    
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+        return true
     }
 }

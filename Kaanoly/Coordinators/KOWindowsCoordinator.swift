@@ -164,6 +164,7 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         for screen in NSScreen.screens {
             guard let displayId = screen.getScreenNumber() else { continue }
             let pickerWindow = KOPartOfScreenPickerWindow.init(displayId: displayId)
+            pickerWindow.delegate = self
             self.partOfScreenPickerWindows[displayId] = pickerWindow
             pickerWindow.setup(propertiesManager: self.propertiesManager)
             pickerWindow.level = .screenSaver
@@ -177,7 +178,7 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
     
     func closePartOfScreenPicker() {
         for key in self.partOfScreenPickerWindows.keys {
-            self.partOfScreenPickerWindows[key]?.close()
+            self.partOfScreenPickerWindows[key]?.orderOut(nil)
         }
         self.overlayWindow?.orderFrontRegardless()
         self.homeWindow?.makeKey()
