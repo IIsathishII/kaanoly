@@ -16,6 +16,10 @@ extension KOCameraPreviewMovableView {
         var viewRect = superview!.frame
         viewRect.origin.x += screenFrame.origin.x
         viewRect.origin.y += screenFrame.origin.y
+        if let croppedRect = self.presenterDelegate?.propertiesManager?.getCroppedRect() {
+            viewRect.origin.x -= croppedRect.origin.x
+            viewRect.origin.y -= croppedRect.origin.y
+        }
         
         let cornerSpacing = CGFloat(10)
         var delX = (pos == .topright || pos == .bottomright) ? event.deltaX : -event.deltaX
@@ -99,6 +103,10 @@ extension KOCameraPreviewMovableView {
             if self.getBottomBorderOffset(previewRect: viewRect, recordingFrame: screenFrame, delHeight: delHeight) > 0 {
                 delY = -delHeight
             }
+        }
+        if let croppedRect = self.presenterDelegate?.propertiesManager?.getCroppedRect() {
+            viewRect.origin.x += croppedRect.origin.x
+            viewRect.origin.y += croppedRect.origin.y
         }
         self.presenterDelegate?.viewDelegate?.resizeCameraPreview(delX: (pos == .topright || pos == .bottomright) ? 0 : -delX, delY: delY, delWidth: delWidth, delHeight: delHeight)
     }

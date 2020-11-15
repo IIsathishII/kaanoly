@@ -13,7 +13,7 @@ class KOPropertiesStore : NSObject {
     weak var viewDelegate: KOWindowsCoordinatorDelegate?
 
     private var source : KOMediaSettings.MediaSource = UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.source) as? KOMediaSettings.MediaSource ?? [.camera, .screen, .audio]
-    private weak var screen : NSScreen? = NSScreen.screens[0]
+    private var screenId : CGDirectDisplayID? = NSScreen.screens[0].getScreenNumber()
     private var captureMouseClick = (UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.captureMouseClick) as? Bool) ?? false
     private var isMirrored = (UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.mirrorCamera) as? Bool) ?? true
     private var storageDirectory : URL? = {
@@ -59,10 +59,10 @@ class KOPropertiesStore : NSObject {
     
     override init() {
         super.init()
-        self.screen = NSScreen.screens[0]
-        KOObjectSubscriber.onObjectDeinit(forObject: self.screen!, callbackId: "", callback: {
-            self.screen = NSScreen.screens[0]
-        })
+//        self.screen = NSScreen.screens[0]
+//        KOObjectSubscriber.onObjectDeinit(forObject: self.screen!, callbackId: "", callback: {
+//            self.screen = NSScreen.screens[0]
+//        })
 //        self.storageDirectory?.stopAccessingSecurityScopedResource()
 //        self.clearUserDefaults()
     }
@@ -105,20 +105,26 @@ extension KOPropertiesStore : KOPropertiesDataManager {
     }
     
     func getCurrentScreen() -> NSScreen? {
-        return screen
+        return NSScreen.screens.first(where: { $0.getScreenNumber() == self.screenId })
     }
     
     func setCurrentScreen(_ screen: NSScreen) {
-        self.screen = screen
+        self.screenId = screen.getScreenNumber()
         KORecordingCoordinator.sharedInstance.modifyRecorder(propertiesManager: self)
         self.viewDelegate?.change(Screen: screen)
     }
     
     func getCurrentScreenFrame() -> NSRect? {
         if self.croppedRect == nil {
-            return screen?.frame
+            return self.getCurrentScreen()?.frame
         } else {
-            return self.croppedRect
+            if self.croppedRect != nil {
+                var finalRect = self.croppedRect!
+                finalRect.origin.x += self.getCurrentScreen()?.frame.origin.x ?? 0
+                finalRect.origin.y += self.getCurrentScreen()?.frame.origin.y ?? 0
+                return finalRect
+            }
+            return nil
         }
     }
     
@@ -161,10 +167,11 @@ extension KOPropertiesStore : KOPropertiesDataManager {
     }
     
     func setCropped(Rect rect: NSRect?, displayId: CGDirectDisplayID) {
-        if rect != nil {
-            self.screen = NSScreen.screens.first(where: { $0.getScreenNumber() == displayId })
-        }
         self.croppedRect = rect
+        if rect != nil, let screen = NSScreen.screens.first(where: { $0.getScreenNumber() == displayId }) {
+//            self.screenId = displayId
+            self.setCurrentScreen(screen)
+        }
         self.viewDelegate?.closePartOfScreenPicker()
     }
     

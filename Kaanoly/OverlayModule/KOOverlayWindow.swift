@@ -19,6 +19,7 @@ class KOOverlayWindow : NSWindow {
         self.isOpaque = false
         self.hasShadow = false
         self.backgroundColor = NSColor.clear
+        self.ignoresMouseEvents = true
     }
     
     func setup(propertiesManager: KOPropertiesDataManager?) {

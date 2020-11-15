@@ -183,6 +183,8 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         self.overlayWindow?.orderFrontRegardless()
         self.homeWindow?.makeKey()
         self.homeWindow?.orderFrontRegardless()
+        
+        self.overlayWindow?.overlayViewController.resetCameraPreviewPosition()
     }
     
     func clearPartOfScreenSelectionsInAllScreens() {

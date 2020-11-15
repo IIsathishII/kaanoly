@@ -80,9 +80,9 @@ class KOMultimediaRecorder : NSObject {
         if sources.contains(.screen) {
             screenCaptureSession = AVCaptureSession.init()
             screenInput = AVCaptureScreenInput.init(displayID: displayId)
-//            if let croppedRect = self.propertiesManager?.getCroppedRect(), let screen = self.propertiesManager?.getCurrentScreen() {
-//                screenInput?.cropRect = NSRect.init(x: 0, y: screen.frame.height-croppedRect.height, width: croppedRect.width, height: croppedRect.height)
-//            }
+            if let croppedRect = self.propertiesManager?.getCroppedRect(), let screen = self.propertiesManager?.getCurrentScreen() {
+                screenInput?.cropRect = NSRect.init(x: croppedRect.origin.x, y: screen.frame.height-croppedRect.origin.y-croppedRect.height, width: croppedRect.width, height: croppedRect.height)
+            }
             self.setMouseHighlighterProp()
         }
         if sources.contains(.camera) {

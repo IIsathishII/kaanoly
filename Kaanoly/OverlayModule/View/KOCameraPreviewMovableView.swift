@@ -79,11 +79,18 @@ class KOCameraPreviewMovableView : NSFlippedView {
         }
     }
     
+    override func mouseEntered(with event: NSEvent) {
+        super.mouseEntered(with: event)
+        NSCursor.arrow.set()
+        self.window?.ignoresMouseEvents = false
+    }
+    
     override func mouseExited(with event: NSEvent) {
         super.mouseExited(with: event)
         if self.presenterDelegate?.getIsResizing() == false {
             self.setResizeCursor(pos: nil)
         }
+        self.window?.ignoresMouseEvents = true
     }
     
     func setResizeCursor(pos: CameraPreviewConstants.CursorPosition?) {

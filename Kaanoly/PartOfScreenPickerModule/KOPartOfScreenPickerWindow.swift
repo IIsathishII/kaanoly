@@ -18,10 +18,8 @@ class KOPartOfScreenPickerWindow : NSWindow {
         self.pickerViewController = KOPartOfScreenPickerViewController.init()
         super.init(contentRect: .zero, styleMask: [.borderless], backing: .buffered, defer: false)
         self.contentViewController = self.pickerViewController
-        self.isOpaque = false
         self.hasShadow = false
         self.backgroundColor = NSColor.clear
-        self.isOpaque = true
         self.ignoresMouseEvents = false
     }
     

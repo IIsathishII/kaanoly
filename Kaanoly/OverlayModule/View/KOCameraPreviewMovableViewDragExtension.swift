@@ -15,6 +15,10 @@ extension KOCameraPreviewMovableView {
         var viewRect = superview!.frame
         viewRect.origin.x += screenFrame.origin.x
         viewRect.origin.y += screenFrame.origin.y
+        if let croppedRect = self.presenterDelegate?.propertiesManager?.getCroppedRect() {
+            viewRect.origin.x -= croppedRect.origin.x
+            viewRect.origin.y -= croppedRect.origin.y
+        }
         var delX: CGFloat = 0, delY: CGFloat = 0
         var isAnimated = false
         guard let diffX = self.presenterDelegate?.getDiff()?.x, let diffY = self.presenterDelegate?.getDiff()?.y else { return }
@@ -113,8 +117,12 @@ extension KOCameraPreviewMovableView {
                 }
             }
         }
+        if let croppedRect = self.presenterDelegate?.propertiesManager?.getCroppedRect() {
+            viewRect.origin.x += croppedRect.origin.x
+            viewRect.origin.y += croppedRect.origin.y
+        }
         viewRect.origin.x -= screenFrame.origin.x
-        viewRect.origin.y -= screenFrame.origin.y        
+        viewRect.origin.y -= screenFrame.origin.y
         self.presenterDelegate?.viewDelegate?.moveCameraPreview(locX: viewRect.origin.x+delX, locY: viewRect.origin.y+delY, isAnimated: isAnimated)
     }
     
