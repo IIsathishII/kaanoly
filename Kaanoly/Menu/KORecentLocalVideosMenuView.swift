@@ -44,6 +44,9 @@ class KORecentLocalVideosMenuView : NSView {
         self.recentVideosTableView.headerView = nil
         self.recentVideosTableView.delegate = self
         self.recentVideosTableView.dataSource = self
+        if #available(OSX 11.0, *) {
+            self.recentVideosTableView.style = .plain
+        }
         
         let column = NSTableColumn.init()
         column.width = 224

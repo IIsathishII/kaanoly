@@ -15,6 +15,7 @@ class KOWindowsCoordinator : NSObject {
     var menu: NSMenu
     var overlayWindow: KOOverlayWindow?
     var homeWindow: KOHomeWindow?
+    var controlWindow : KORecordingControlWindow?
 
     var partOfScreenPickerWindows : [CGDirectDisplayID: KOPartOfScreenPickerWindow] = [:]
     
@@ -68,6 +69,15 @@ class KOWindowsCoordinator : NSObject {
             homeWindow?.level = NSWindow.Level.init(Int(CGShieldingWindowLevel()))
             homeWindow?.collectionBehavior = [.canJoinAllSpaces, .fullScreenPrimary, .managed]
             homeWindow?.orderFrontRegardless()
+            
+            controlWindow = KORecordingControlWindow.init()
+            controlWindow?.setup(propertiesManager: propertiesManager, coordinatorDelegate: self)
+            self.overlayWindow?.addChildWindow(controlWindow!, ordered: .above)
+            controlWindow?.level = .screenSaver
+            controlWindow?.collectionBehavior = [.canJoinAllSpaces, .fullScreenPrimary, .transient]
+            controlWindow?.orderFrontRegardless()
+            controlWindow?.setControlFrame()
+//            controlWindow?.setFrame(NSRect.init(origin: CGPoint.init(x: 0, y: 600), size: CGSize.init(width: 36, height: 112)), display: true)
             
 //            var displays : [CGDirectDisplayID] = Array.init(repeating: 0, count: 10)
 //            var count : uint32 = 0
@@ -133,6 +143,7 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
     func change(Screen screen: NSScreen) {
         self.overlayWindow?.setFrame(screen.frame, display: true, animate: false)
         self.overlayWindow?.overlayViewController.resetCameraPreviewPosition()
+        self.controlWindow?.setControlFrame()
     }
     
     func beginRecording() {
@@ -140,11 +151,11 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem.button?.title = "Stop"
         statusItem.button?.target = self
-        statusItem.button?.action = #selector(stopRecording)
+//        statusItem.button?.action = #selector(stopRecording)
         self.homeWindow?.orderOut(nil)
     }
     
-    @objc func stopRecording() {
+    func stopRecording() {
         menu = NSMenu.init()
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem.button?.title = "Kaanoly"
@@ -154,6 +165,14 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         self.overlayWindow?.orderOut(nil)
         self.overlayWindow = nil
         self.homeWindow = nil
+    }
+    
+    func pauseRecording() {
+        KORecordingCoordinator.sharedInstance.pauseRecording()
+    }
+    
+    func resumeRecording() {
+        KORecordingCoordinator.sharedInstance.resumeRecording()
     }
     
     func openPartOfScreenPicker() {

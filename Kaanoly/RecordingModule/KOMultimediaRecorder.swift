@@ -36,11 +36,14 @@ class KOMultimediaRecorder : NSObject {
     
     var assetWriter : AVAssetWriter?
     var isRecording = false
-    var sessionAtSourceTime : CMTime?
     var videoWriterInput : AVAssetWriterInput?
     var audioWriterInput : AVAssetWriterInput?
     
     var isPrepared = false
+    
+    var sessionAtSourceTime : CMTime?
+    var _prevVideoTimestamp : CMTime?
+    var _prevAudioTimestamp : CMTime?
     
     var sequenceRequestHandler = VNSequenceRequestHandler.init()
     var faceView = CALayer.init()
@@ -197,6 +200,14 @@ class KOMultimediaRecorder : NSObject {
         }
     }
     
+    func pauseRecording() {
+        self.isRecording = false
+    }
+    
+    func resumeRecording() {
+        self.isRecording = true
+    }
+    
 }
 
 extension KOMultimediaRecorder : AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate {
@@ -213,52 +224,23 @@ extension KOMultimediaRecorder : AVCaptureVideoDataOutputSampleBufferDelegate, A
         }
         if output == videoOutput {
             if videoWriterInput?.isReadyForMoreMediaData == true {
-                if let imageBuffer : CVPixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
-//                    let request = VNDetectFaceRectanglesRequest.init { (request, error) in
-//                        DispatchQueue.main.async {
-//                            guard let results = request.results as? [VNFaceObservation], let result = results.first else {
-//                                self.faceView.removeFromSuperlayer()
-//                                return
-//                            }
-//                            let box = result.boundingBox
-//                            if self.faceView.superlayer == nil {
-//                                self.cameraPreview?.addSublayer(self.faceView)
-//                            }
-////                            self.faceView.frame = VNImageRectForNormalizedRect(box, CVPixelBufferGetWidth(imageBuffer), CVPixelBufferGetHeight(imageBuffer))
-//                            if let description = CMSampleBufferGetFormatDescription(sampleBuffer) {
-//                                let videoDimension = CMVideoFormatDescriptionGetDimensions(description)
-//                                var width = CGFloat(videoDimension.width)
-//                                var height = CGFloat(videoDimension.height)
-//                                let wScale = self.cameraPreview!.frame.width/width
-//                                let hScale = self.cameraPreview!.frame.height/height
-//                                let frame = VNImageRectForNormalizedRect(box, Int(videoDimension.width), Int(videoDimension.height))
-//                                width = frame.width
-//                                height = frame.height
-//                                if wScale == 0 || hScale == 0 {
-//                                    
-//                                }
-//                                self.faceView.frame = NSRect.init(x: width*box.origin.x, y: height*box.origin.y, width: width*box.width, height: height*box.height)
-//                            }
-////                            let width = CGFloat(CVPixelBufferGetWidth(imageBuffer))
-////                            let height = CGFloat(CVPixelBufferGetHeight(imageBuffer))
-////                            self.faceView.frame = NSRect.init(x: width*box.origin.x/(self.cameraPreview!.frame.width/width), y: height*box.origin.y/(self.cameraPreview!.frame.height/height), width: width*box.width/(self.cameraPreview!.frame.width/width), height: height*box.height/(self.cameraPreview!.frame.height/height))
-//                            print("Box >>>>>>>>>>> ", box )
-//                        }
-//                    }
-//                    do {
-//                        try sequenceRequestHandler.perform([request], on: imageBuffer)
-//                    } catch {
-//                        print(error.localizedDescription)
-//                    }
-//                    var image = CIImage.init(cvImageBuffer: imageBuffer)
-////                    image.cropped(to: CGRect.init(origin: .zero, size: CGSize.init(width: 200, height: 100)))
-//                    image = image.applyingGaussianBlur(sigma: 2.0)
+                var bufferTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+                let bufferDuration = CMSampleBufferGetDuration(sampleBuffer)
+                if bufferDuration.value > 0 {
+                    bufferTime = CMTimeAdd(bufferTime, bufferDuration)
                 }
+                self._prevVideoTimestamp = bufferTime
                 videoWriterInput?.append(sampleBuffer)
             }
         }
         if output == audioOutput {
             if audioWriterInput?.isReadyForMoreMediaData == true {
+                var bufferTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+                let bufferDuration = CMSampleBufferGetDuration(sampleBuffer)
+                if bufferDuration.value > 0 {
+                    bufferTime = CMTimeAdd(bufferTime, bufferDuration)
+                }
+                self._prevAudioTimestamp = bufferTime
                 audioWriterInput?.append(sampleBuffer)
             }
         }
@@ -283,6 +265,20 @@ extension KOMultimediaRecorder : AVCaptureVideoDataOutputSampleBufferDelegate, A
         if assetWriter!.canAdd(audioWriterInput!) {
             assetWriter?.add(audioWriterInput!)
         }
+    }
+    
+    func adjustTime(For sampleBuffer: CMSampleBuffer, by offset: CMTime) -> CMSampleBuffer {
+        var count : CMItemCount = 0
+        CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, entryCount: 0, arrayToFill: nil, entriesNeededOut: &count)
+        var sampleInfoArr = [CMSampleTimingInfo]()
+        CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, entryCount: count, arrayToFill: &sampleInfoArr, entriesNeededOut: &count)
+        for var sampleInfo in sampleInfoArr {
+            sampleInfo.decodeTimeStamp = CMTimeSubtract(sampleInfo.decodeTimeStamp, offset)
+            sampleInfo.presentationTimeStamp = CMTimeSubtract(sampleInfo.presentationTimeStamp, offset)
+        }
+        var newSampleBuffer : CMSampleBuffer?
+        CMSampleBufferCreateCopyWithNewTiming(allocator: nil, sampleBuffer: sampleBuffer, sampleTimingEntryCount: count, sampleTimingArray: sampleInfoArr, sampleBufferOut: &newSampleBuffer)
+        return newSampleBuffer ?? sampleBuffer
     }
     
     func convert(rect: CGRect) -> CGRect {

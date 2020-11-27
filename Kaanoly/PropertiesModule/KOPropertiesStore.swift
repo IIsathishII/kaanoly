@@ -178,4 +178,8 @@ extension KOPropertiesStore : KOPropertiesDataManager {
     func getCroppedRect() -> NSRect? {
         return self.croppedRect
     }
+    
+    func isRecordingPartOfWindow() -> Bool {
+        return self.croppedRect != nil
+    }
 }

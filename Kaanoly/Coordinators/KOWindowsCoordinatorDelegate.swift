@@ -14,6 +14,9 @@ protocol KOWindowsCoordinatorDelegate : class {
     func change(Screen screen: NSScreen)
     
     func beginRecording()
+    func stopRecording()
+    func pauseRecording()
+    func resumeRecording()
     
     func openPartOfScreenPicker()
     func closePartOfScreenPicker()

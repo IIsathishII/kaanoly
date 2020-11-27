@@ -27,8 +27,8 @@ class KOOverlayViewController : NSViewController {
         super.viewDidLoad()
         self.view.wantsLayer = true
         self.view.layer?.masksToBounds = true
-        self.view.layer?.borderColor = NSColor.red.cgColor
-        self.view.layer?.borderWidth = 2
+//        self.view.layer?.borderColor = NSColor.red.cgColor
+//        self.view.layer?.borderWidth = 2
         if let screenFrame = self.presenterDelegate?.propertiesManager?.getCurrentScreenFrame() {
             self.view.frame = NSRect.init(x: 0, y: 0, width: screenFrame.width, height: screenFrame.height)
         }
@@ -107,8 +107,8 @@ extension KOOverlayViewController : KOOverlayViewDelegate {
         if let croppedRect = self.presenterDelegate?.propertiesManager?.getCroppedRect() {
             previewFrame.origin.x += croppedRect.origin.x
             previewFrame.origin.y = croppedRect.origin.y+croppedRect.height-height-CameraPreviewConstants.verticalSpacing
+            self.setupScreenMask()
         }
-        self.setupScreenMask()
         self.cameraPreviewView?.animator().setFrameOrigin(previewFrame.origin)
         self.cameraPreviewView?.animator().setFrameSize(previewFrame.size)
     }
@@ -163,7 +163,6 @@ extension KOOverlayViewController : KOOverlayViewDelegate {
             self.screenMask?.path = path.cgPath
             self.dimView?.layer?.mask = self.screenMask
         }
-        
     }
 }
 

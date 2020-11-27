@@ -39,8 +39,8 @@ class KOCameraPreviewViewController: NSViewController {
         self.view.layer?.backgroundColor = NSColor.black.cgColor
         self.view.layer?.contents = NSImage.init(named: "CamreaPreviewBackground")
         self.view.layer?.contentsGravity = .resize
-        self.view.layer?.borderColor = KOStyleProperties.Color.cameraPreviewBorderColor.cgColor
-        self.view.layer?.borderWidth = 1
+//        self.view.layer?.borderColor = KOStyleProperties.Color.cameraPreviewBorderColor.cgColor
+//        self.view.layer?.borderWidth = 1
         self.setCornerRadius()
         self.setupPreview()
     }
