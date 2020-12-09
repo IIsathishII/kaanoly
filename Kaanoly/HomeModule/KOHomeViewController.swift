@@ -115,6 +115,7 @@ class KOHomeViewController : NSViewController {
             self.viewDelegate?.openPartOfScreenPicker()
         } else {
             let index = sender.indexOfSelectedItem
+            self.propertiesManager?.setCropped(Rect: nil, displayId: NSScreen.screens[index].getScreenNumber()!)
             self.propertiesManager?.setCurrentScreen(NSScreen.screens[index])
         }
     }

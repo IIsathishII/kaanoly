@@ -44,6 +44,10 @@ class KOMultimediaRecorder : NSObject {
     var sessionAtSourceTime : CMTime?
     var _prevVideoTimestamp : CMTime?
     var _prevAudioTimestamp : CMTime?
+    var videoOffset = CMTime.zero
+    var audioOffset = CMTime.zero
+    var didJustResumeVideo = false
+    var didJustResumeAudio = false
     
     var sequenceRequestHandler = VNSequenceRequestHandler.init()
     var faceView = CALayer.init()
@@ -206,6 +210,8 @@ class KOMultimediaRecorder : NSObject {
     
     func resumeRecording() {
         self.isRecording = true
+        self.didJustResumeVideo = true
+        self.didJustResumeAudio = true
     }
     
 }
@@ -224,24 +230,46 @@ extension KOMultimediaRecorder : AVCaptureVideoDataOutputSampleBufferDelegate, A
         }
         if output == videoOutput {
             if videoWriterInput?.isReadyForMoreMediaData == true {
+                if let last = self._prevVideoTimestamp, didJustResumeVideo {
+                    didJustResumeVideo = false
+                    let currentTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+                    let timeOffset = CMTimeSubtract(currentTime, last)
+                    self.videoOffset = timeOffset
+                }
+                if self.videoOffset != .zero {
+                    let newSampleBuffer = self.adjustTime(For: sampleBuffer, by: self.videoOffset)
+                    videoWriterInput?.append(newSampleBuffer)
+                } else {
+                    videoWriterInput?.append(sampleBuffer)
+                }
                 var bufferTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
                 let bufferDuration = CMSampleBufferGetDuration(sampleBuffer)
                 if bufferDuration.value > 0 {
                     bufferTime = CMTimeAdd(bufferTime, bufferDuration)
                 }
                 self._prevVideoTimestamp = bufferTime
-                videoWriterInput?.append(sampleBuffer)
             }
         }
         if output == audioOutput {
             if audioWriterInput?.isReadyForMoreMediaData == true {
+                if let last = self._prevAudioTimestamp, didJustResumeAudio {
+                    didJustResumeAudio = false
+                    var bufferTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+                    let timeOffset = CMTimeSubtract(bufferTime, last)
+                    self.audioOffset = timeOffset
+                }
+                if self.audioOffset != .zero {
+                    let newSampleBuffer = self.adjustTime(For: sampleBuffer, by: self.audioOffset)
+                    audioWriterInput?.append(newSampleBuffer)
+                } else {
+                    audioWriterInput?.append(sampleBuffer)
+                }
                 var bufferTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
                 let bufferDuration = CMSampleBufferGetDuration(sampleBuffer)
                 if bufferDuration.value > 0 {
                     bufferTime = CMTimeAdd(bufferTime, bufferDuration)
                 }
                 self._prevAudioTimestamp = bufferTime
-                audioWriterInput?.append(sampleBuffer)
             }
         }
     }
@@ -270,14 +298,14 @@ extension KOMultimediaRecorder : AVCaptureVideoDataOutputSampleBufferDelegate, A
     func adjustTime(For sampleBuffer: CMSampleBuffer, by offset: CMTime) -> CMSampleBuffer {
         var count : CMItemCount = 0
         CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, entryCount: 0, arrayToFill: nil, entriesNeededOut: &count)
-        var sampleInfoArr = [CMSampleTimingInfo]()
-        CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, entryCount: count, arrayToFill: &sampleInfoArr, entriesNeededOut: &count)
-        for var sampleInfo in sampleInfoArr {
-            sampleInfo.decodeTimeStamp = CMTimeSubtract(sampleInfo.decodeTimeStamp, offset)
-            sampleInfo.presentationTimeStamp = CMTimeSubtract(sampleInfo.presentationTimeStamp, offset)
+        var sampleInfo = [CMSampleTimingInfo](repeating: CMSampleTimingInfo.init(duration: .zero, presentationTimeStamp: .zero, decodeTimeStamp: .zero), count: count)
+        CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, entryCount: count, arrayToFill: &sampleInfo, entriesNeededOut: &count)
+        for i in 0..<count {
+            sampleInfo[i].decodeTimeStamp = CMTimeSubtract(sampleInfo[i].decodeTimeStamp, offset)
+            sampleInfo[i].presentationTimeStamp = CMTimeSubtract(sampleInfo[i].presentationTimeStamp, offset)
         }
         var newSampleBuffer : CMSampleBuffer?
-        CMSampleBufferCreateCopyWithNewTiming(allocator: nil, sampleBuffer: sampleBuffer, sampleTimingEntryCount: count, sampleTimingArray: sampleInfoArr, sampleBufferOut: &newSampleBuffer)
+        CMSampleBufferCreateCopyWithNewTiming(allocator: nil, sampleBuffer: sampleBuffer, sampleTimingEntryCount: count, sampleTimingArray: sampleInfo, sampleBufferOut: &newSampleBuffer)
         return newSampleBuffer ?? sampleBuffer
     }
     
