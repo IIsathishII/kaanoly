@@ -13,7 +13,7 @@ class KOHomeWindow : NSWindow {
     var homeViewController = KOHomeViewController.init()
     
     init() {
-        super.init(contentRect: NSRect.init(origin: .zero, size: CGSize.init(width: 400, height: 300)), styleMask: [.closable, .titled], backing: .buffered, defer: false)
+        super.init(contentRect: NSRect.init(origin: .zero, size: CGSize.init(width: 350, height: 450)), styleMask: [.closable, .titled], backing: .buffered, defer: false)
         self.title = "Kaanoly"
         self.contentViewController = homeViewController
         self.center()

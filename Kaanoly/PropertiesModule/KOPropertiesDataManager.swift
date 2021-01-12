@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import AVFoundation
 
 protocol KOPropertiesDataManager : class {
     
@@ -21,6 +22,9 @@ protocol KOPropertiesDataManager : class {
     func getCurrentScreen() -> NSScreen?
     func setCurrentScreen(_ screen: NSScreen)
     func getCurrentScreenFrame() -> NSRect?
+    
+    func setCurrentAudio(Source source: AVCaptureDevice)
+    func setCurrentVideo(Source source: AVCaptureDevice)
     
     func shouldCaptureMouseClick() -> Bool
     func setCaptureMouseClick(_ val: Bool)

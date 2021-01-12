@@ -27,6 +27,9 @@ class KOMultimediaRecorder : NSObject {
     var cameraInput : AVCaptureDeviceInput?
     var audioInput : AVCaptureDeviceInput?
     
+    var currentCameraSource : AVCaptureDevice = AVCaptureDevice.default(for: .video)!
+    var currentAudioSource : AVCaptureDevice = AVCaptureDevice.default(for: .audio)!
+    
     var cameraPreview : AVCaptureVideoPreviewLayer?
     
     var videoOutput : AVCaptureVideoDataOutput?
@@ -96,13 +99,13 @@ class KOMultimediaRecorder : NSObject {
             cameraCaptureSession = AVCaptureSession.init()
             cameraPreview = AVCaptureVideoPreviewLayer.init(session: cameraCaptureSession!)
             cameraPreview?.contentsGravity = .resize
-            camera = AVCaptureDevice.default(for: .video)
+            camera = self.currentCameraSource
             if camera != nil {
                 cameraInput = try? AVCaptureDeviceInput.init(device: camera!)
             }
         }
         if sources.contains(.audio) {
-            microphone = AVCaptureDevice.default(for: .audio)
+            microphone = self.currentAudioSource
             if microphone != nil {
                 audioInput = try? AVCaptureDeviceInput.init(device: microphone!)
             }
@@ -335,5 +338,13 @@ extension KOMultimediaRecorder : AVCaptureVideoDataOutputSampleBufferDelegate, A
         if props.contains(.mouseHighlighter) {
             self.setMouseHighlighterProp()
         }
+    }
+    
+    func setAudio(Source source : AVCaptureDevice) {
+        self.currentAudioSource = source
+    }
+    
+    func setVideo(Source source: AVCaptureDevice) {
+        self.currentCameraSource = source
     }
 }

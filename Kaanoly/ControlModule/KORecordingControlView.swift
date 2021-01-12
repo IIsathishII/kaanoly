@@ -101,4 +101,16 @@ class KORecordingControlView : NSView {
     @objc func cancelRecording() {
         
     }
+    
+    func enableAllButtons() {
+        self.stopButton.isEnabled = true
+        self.pauseButton.isEnabled = true
+        self.deleteButton.isEnabled = true
+    }
+    
+    func disableAllButtons() {
+        self.stopButton.isEnabled = false
+        self.pauseButton.isEnabled = false
+        self.deleteButton.isEnabled = false
+    }
 }

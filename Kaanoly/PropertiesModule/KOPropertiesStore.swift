@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import AVFoundation
 
 class KOPropertiesStore : NSObject {
     
@@ -126,6 +127,16 @@ extension KOPropertiesStore : KOPropertiesDataManager {
             }
             return nil
         }
+    }
+    
+    func setCurrentAudio(Source source: AVCaptureDevice) {
+        KORecordingCoordinator.sharedInstance.setAudio(Source: source)
+        KORecordingCoordinator.sharedInstance.modifyRecorder(propertiesManager: self)
+    }
+    
+    func setCurrentVideo(Source source: AVCaptureDevice) {
+        KORecordingCoordinator.sharedInstance.setVideo(Source: source)
+        KORecordingCoordinator.sharedInstance.modifyRecorder(propertiesManager: self)
     }
     
     func shouldCaptureMouseClick() -> Bool {

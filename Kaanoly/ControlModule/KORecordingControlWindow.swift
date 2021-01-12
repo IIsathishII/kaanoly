@@ -24,6 +24,16 @@ class KORecordingControlWindow : NSWindow {
         }
     }
     
+    var isEnabled = true {
+        didSet {
+            if isEnabled {
+                self.recordingController.controlView.enableAllButtons()
+            } else {
+                self.recordingController.controlView.disableAllButtons()
+            }
+        }
+    }
+    
     init() {
         super.init(contentRect: .zero, styleMask: [.borderless], backing: .buffered, defer: false)
         self.isOpaque = false

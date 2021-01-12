@@ -70,4 +70,12 @@ class KORecordingCoordinator {
     func setSession(Props props: [KORecordingSessionProps]) {
         KORecordingCoordinator.sharedInstance.recorder?.setSession(Props: props)
     }
+    
+    func setAudio(Source source : AVCaptureDevice) {
+        KORecordingCoordinator.sharedInstance.recorder?.setAudio(Source: source)
+    }
+    
+    func setVideo(Source source: AVCaptureDevice) {
+        KORecordingCoordinator.sharedInstance.recorder?.setVideo(Source: source)
+    }
 }

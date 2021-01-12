@@ -27,6 +27,8 @@
 		884EEBE52517AF9300168F9E /* KOOverlayPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBDB2517AF9300168F9E /* KOOverlayPresenter.swift */; };
 		884EEBE62517AF9300168F9E /* KOCameraPreviewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBDC2517AF9300168F9E /* KOCameraPreviewPresenter.swift */; };
 		884EEBE92517AFB200168F9E /* KOUserDefaultKeyConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884EEBE82517AFB200168F9E /* KOUserDefaultKeyConstants.swift */; };
+		885C9EC325AD462300D49061 /* KOHomeDropDownButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885C9EC125AD462300D49061 /* KOHomeDropDownButton.swift */; };
+		885C9EC425AD462300D49061 /* KOHomeLargeIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885C9EC225AD462300D49061 /* KOHomeLargeIcon.swift */; };
 		8871E0C925711F7500FA0CAA /* KORecordingControlDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8871E0C525711F7500FA0CAA /* KORecordingControlDelegate.swift */; };
 		8871E0CA25711F7500FA0CAA /* KORecordingControlPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8871E0C625711F7500FA0CAA /* KORecordingControlPresenter.swift */; };
 		8871E0CB25711F7500FA0CAA /* KORecordingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8871E0C725711F7500FA0CAA /* KORecordingControlView.swift */; };
@@ -70,6 +72,8 @@
 		884EEBDB2517AF9300168F9E /* KOOverlayPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOOverlayPresenter.swift; sourceTree = "<group>"; };
 		884EEBDC2517AF9300168F9E /* KOCameraPreviewPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOCameraPreviewPresenter.swift; sourceTree = "<group>"; };
 		884EEBE82517AFB200168F9E /* KOUserDefaultKeyConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOUserDefaultKeyConstants.swift; sourceTree = "<group>"; };
+		885C9EC125AD462300D49061 /* KOHomeDropDownButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOHomeDropDownButton.swift; sourceTree = "<group>"; };
+		885C9EC225AD462300D49061 /* KOHomeLargeIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KOHomeLargeIcon.swift; sourceTree = "<group>"; };
 		8871E0C525711F7500FA0CAA /* KORecordingControlDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KORecordingControlDelegate.swift; sourceTree = "<group>"; };
 		8871E0C625711F7500FA0CAA /* KORecordingControlPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KORecordingControlPresenter.swift; sourceTree = "<group>"; };
 		8871E0C725711F7500FA0CAA /* KORecordingControlView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KORecordingControlView.swift; sourceTree = "<group>"; };
@@ -212,6 +216,8 @@
 		88A34F6424A732E9002DF00F /* HomeModule */ = {
 			isa = PBXGroup;
 			children = (
+				885C9EC125AD462300D49061 /* KOHomeDropDownButton.swift */,
+				885C9EC225AD462300D49061 /* KOHomeLargeIcon.swift */,
 				88A34F7024A733B1002DF00F /* KOHomeViewController.swift */,
 				88A34F7124A733B1002DF00F /* KOHomeWindow.swift */,
 			);
@@ -357,6 +363,7 @@
 				889F7A6425326A8500D7DFBC /* KOClassExtensions.swift in Sources */,
 				8836D2F825588EFE00530931 /* KOCircularImageButton.swift in Sources */,
 				884EEBE92517AFB200168F9E /* KOUserDefaultKeyConstants.swift in Sources */,
+				885C9EC325AD462300D49061 /* KOHomeDropDownButton.swift in Sources */,
 				8836D2F325588ECD00530931 /* KORecentLocalVideosMenuView.swift in Sources */,
 				88A34F7D24A733BF002DF00F /* KORecordingCoordinator.swift in Sources */,
 				88A34F7724A733B8002DF00F /* KOWindowsCoordinator.swift in Sources */,
@@ -378,6 +385,7 @@
 				884EEBE52517AF9300168F9E /* KOOverlayPresenter.swift in Sources */,
 				8871E0CC25711F7500FA0CAA /* KORecordingControlWindow.swift in Sources */,
 				8871E0CB25711F7500FA0CAA /* KORecordingControlView.swift in Sources */,
+				885C9EC425AD462300D49061 /* KOHomeLargeIcon.swift in Sources */,
 				884EEBE62517AF9300168F9E /* KOCameraPreviewPresenter.swift in Sources */,
 				88A34F7224A733B1002DF00F /* KOHomeViewController.swift in Sources */,
 				8836D2ED25588EBD00530931 /* KOPartOfScreenPickerWindow.swift in Sources */,
