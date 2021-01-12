@@ -14,7 +14,7 @@ class KOWindowsCoordinator : NSObject {
     var statusItem: NSStatusItem
     var menu: NSMenu
     var overlayWindow: KOOverlayWindow?
-    var homeWindow: KOHomeWindow?
+    var homeWindowController: NSWindowController?
     var controlWindow : KORecordingControlWindow?
 
     var partOfScreenPickerWindows : [CGDirectDisplayID: KOPartOfScreenPickerWindow] = [:]
@@ -54,6 +54,7 @@ class KOWindowsCoordinator : NSObject {
     }
     
     @objc func openRecordingLobby() {
+        var homeWindow : KOHomeWindow? = self.homeWindowController?.window as? KOHomeWindow
         if homeWindow == nil {
             KORecordingCoordinator.sharedInstance.setupRecorder(propertiesManager: self.propertiesManager)
             
@@ -69,6 +70,8 @@ class KOWindowsCoordinator : NSObject {
 //            homeWindow?.level = NSWindow.Level.init(NSWindow.Level.screenSaver.rawValue+1)
             homeWindow?.level = NSWindow.Level.init(Int(CGShieldingWindowLevel()))
             homeWindow?.collectionBehavior = [.canJoinAllSpaces, .fullScreenNone, .managed]
+            self.homeWindowController = NSWindowController.init()
+            self.homeWindowController?.window = homeWindow
             homeWindow?.orderFrontRegardless()
             homeWindow?.center()
             homeWindow?.makeKey()
@@ -157,7 +160,7 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         statusItem.button?.target = self
         statusItem.button?.action = #selector(stopRecording)
         self.controlWindow?.isEnabled = true
-        self.homeWindow?.orderOut(nil)
+        self.homeWindowController?.window?.orderOut(nil)
     }
     
     @objc func stopRecording() {
@@ -167,9 +170,12 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         self.setUpMenu()
         KORecordingCoordinator.sharedInstance.endRecording()
         KORecordingCoordinator.sharedInstance.destroyRecorder()
+        self.controlWindow?.orderOut(nil)
+        self.controlWindow = nil
         self.overlayWindow?.orderOut(nil)
         self.overlayWindow = nil
-        self.homeWindow = nil
+        self.homeWindowController?.window = nil
+        self.homeWindowController = nil
     }
     
     func pauseRecording() {
@@ -182,7 +188,7 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
     
     func openPartOfScreenPicker() {
         self.overlayWindow?.orderOut(nil)
-        self.homeWindow?.orderOut(nil)
+        self.homeWindowController?.window?.orderOut(nil)
 
         self.partOfScreenPickerWindows = [:]
         for screen in NSScreen.screens {
@@ -205,8 +211,8 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
             self.partOfScreenPickerWindows[key]?.orderOut(nil)
         }
         self.overlayWindow?.orderFrontRegardless()
-        self.homeWindow?.makeKey()
-        self.homeWindow?.orderFrontRegardless()
+        self.homeWindowController?.window?.makeKey()
+        self.homeWindowController?.window?.orderFrontRegardless()
         
         self.overlayWindow?.overlayViewController.resetCameraPreviewPosition()
     }
@@ -224,8 +230,12 @@ extension KOWindowsCoordinator : NSWindowDelegate {
         if let pickerWindow = notification.object as? KOPartOfScreenPickerWindow {
             self.partOfScreenPickerWindows[pickerWindow.displayId] = nil
         } else if let homeWindow = notification.object as? KOHomeWindow {
+            self.controlWindow?.orderOut(nil)
+            self.controlWindow = nil
             self.overlayWindow?.orderOut(nil)
             self.overlayWindow = nil
+            self.homeWindowController?.window = nil
+            self.homeWindowController = nil
         }
     }
 }
