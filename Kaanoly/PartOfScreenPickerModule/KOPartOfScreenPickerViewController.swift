@@ -19,6 +19,7 @@ class KOPartOfScreenPickerViewController : NSViewController {
     var cropRect : NSRect?
     
     var selectionView : KOPartOfScreenSelectionView?
+    var sizeIndicator : KOPartOfScreenSizeIndicator?
     
     override func loadView() {
         self.view = NSFlippedView.init()
@@ -67,6 +68,7 @@ class KOPartOfScreenPickerViewController : NSViewController {
         let rectOrigin = self.getAdjustedOrigin(ForPoint: currentPos)
         self.cropRect = NSRect.init(origin: rectOrigin, size: CGSize.init(width: currentPos.x-self.startPoint!.x, height: currentPos.y-self.startPoint!.y))
         self.startPoint = nil
+        self.removeSizeIndicator()
         self.setPartOfScreenSelection()
     }
     
@@ -75,6 +77,7 @@ class KOPartOfScreenPickerViewController : NSViewController {
         let currentPos = self.view.convert(event.locationInWindow, from: nil)
         let rectOrigin = self.getAdjustedOrigin(ForPoint: currentPos)
         self.cropRect = NSRect.init(origin: rectOrigin, size: CGSize.init(width: abs(currentPos.x-self.startPoint!.x), height: abs(currentPos.y-self.startPoint!.y)))
+        self.handleSizeIndicator(ForRect: self.cropRect!)
         self.setSelectionMask()
     }
     
@@ -111,6 +114,25 @@ class KOPartOfScreenPickerViewController : NSViewController {
         self.selectionView?.removeFromSuperview()
         self.dimView.layer?.mask = nil
     }
+    
+    func handleSizeIndicator(ForRect rect: CGRect) {
+        let size = rect.size
+        if size.width > 100 && size.height > 100 {
+            if self.sizeIndicator == nil {
+                self.sizeIndicator = KOPartOfScreenSizeIndicator.init()
+                self.view.addSubview(self.sizeIndicator!)
+            }
+            self.sizeIndicator?.sizeLabel.stringValue = "\(Int(size.width)) x \(Int(size.height))"
+            self.sizeIndicator?.frame = NSRect.init(x: rect.origin.x+rect.width/2-self.sizeIndicator!.frame.width/2, y: rect.origin.y+rect.height/2-self.sizeIndicator!.frame.height/2, width: self.sizeIndicator!.frame.width, height: self.sizeIndicator!.frame.height)
+        } else {
+            self.removeSizeIndicator()
+        }
+    }
+    
+    func removeSizeIndicator() {
+        self.sizeIndicator?.removeFromSuperview()
+        self.sizeIndicator = nil
+    }
 }
 
 extension KOPartOfScreenPickerViewController : KOPartOfScreenSelectionViewDelegate {
@@ -124,5 +146,42 @@ class KOPartOfScreenPickerView : NSFlippedView {
     
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
         return true
+    }
+}
+
+class KOPartOfScreenSizeIndicator : NSView {
+    
+    var sizeLabel = NSTextField.init(labelWithString: "")
+    
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        self.setViewProps()
+        self.setSizeLabel()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setViewProps() {
+        self.wantsLayer = true
+        self.layer?.backgroundColor = NSColor.black.cgColor
+        self.alphaValue = 0.8
+        self.layer?.cornerRadius = 8
+    }
+    
+    func setSizeLabel() {
+        self.sizeLabel.font = NSFont.systemFont(ofSize: 18, weight: .black)
+        self.addSubview(self.sizeLabel)
+        self.sizeLabel.translatesAutoresizingMaskIntoConstraints = false
+        self.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            self.heightAnchor.constraint(equalToConstant: 50),
+            
+            self.sizeLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 8),
+            self.sizeLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -8),
+            self.sizeLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor)
+        ])
     }
 }
