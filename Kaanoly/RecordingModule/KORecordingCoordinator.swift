@@ -54,6 +54,10 @@ class KORecordingCoordinator {
         KORecordingCoordinator.sharedInstance.recorder?.resumeRecording()
     }
     
+    func cancelRecording() {
+        KORecordingCoordinator.sharedInstance.recorder?.cancelRecording()
+    }
+    
     func destroyRecorder() {
         KORecordingCoordinator.sharedInstance.recorder = nil
     }

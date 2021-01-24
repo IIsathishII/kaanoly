@@ -99,7 +99,7 @@ class KORecordingControlView : NSView {
     }
     
     @objc func cancelRecording() {
-        
+        self.coordinatorDelegate?.cancelRecording()
     }
     
     func enableAllButtons() {

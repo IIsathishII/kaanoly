@@ -38,4 +38,6 @@ protocol KOPropertiesDataManager : class {
     func setCropped(Rect rect: NSRect?, displayId: CGDirectDisplayID)
     func getCroppedRect() -> NSRect?
     func isRecordingPartOfWindow() -> Bool
+    
+    func resetProperties()
 }

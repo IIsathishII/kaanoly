@@ -13,10 +13,12 @@ protocol KOWindowsCoordinatorDelegate : class {
     func change(Source source: KOMediaSettings.MediaSource)
     func change(Screen screen: NSScreen)
     
-    func beginRecording()
+    func beginRecording(countDownCompletion: @escaping () -> ())
     func stopRecording()
     func pauseRecording()
     func resumeRecording()
+    func cancelRecording()
+    func updateRecentVideosList()
     
     func openPartOfScreenPicker()
     func closePartOfScreenPicker()

@@ -8,6 +8,7 @@
 
 import AppKit
 import Quartz
+import AVFoundation
 
 class KOWindowsCoordinator : NSObject {
     
@@ -16,6 +17,7 @@ class KOWindowsCoordinator : NSObject {
     var overlayWindow: KOOverlayWindow?
     var homeWindowController: NSWindowController?
     var controlWindow : KORecordingControlWindow?
+    var countDownWindow : KOCountDownWindow?
 
     var partOfScreenPickerWindows : [CGDirectDisplayID: KOPartOfScreenPickerWindow] = [:]
     
@@ -24,39 +26,23 @@ class KOWindowsCoordinator : NSObject {
     var isDone = false
     var displayStream : CGDisplayStream?
     
+    var recentVideosList : KORecentLocalVideosMenuView!
+    
     override init() {
         self.propertiesManager = KOPropertiesStore.init()
         menu = NSMenu.init()
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem.button?.title = "Kaanoly"
         super.init()
-        self.setUpMenu()
+        self.setUpMenu(self.menu)
         self.propertiesManager?.viewDelegate = self
-    }
-    
-    func setUpMenu() {
-        let recentVideoList = NSMenuItem.init(title: "Recent Videos", action: nil, keyEquivalent: "")
-        let recentVideoView = KORecentLocalVideosMenuView.init(paths: self.propertiesManager?.getRecentVideos() ?? [])
-        recentVideoView.autoresizingMask = [.width, .height]
-        recentVideoList.view = recentVideoView
-        menu.addItem(recentVideoList)
-        
-        menu.addItem(NSMenuItem.separator())
-        
-        let recordItem = NSMenuItem.init(title: "Open Recording", action: #selector(openRecordingLobby), keyEquivalent: "r")
-        recordItem.target = self
-        menu.addItem(recordItem)
-        
-        let quitItem = NSMenuItem.init(title: "Quit", action: #selector(quitApp), keyEquivalent: "")
-        quitItem.target = self
-        menu.addItem(quitItem)
-        self.statusItem.menu = menu
     }
     
     @objc func openRecordingLobby() {
         var homeWindow : KOHomeWindow? = self.homeWindowController?.window as? KOHomeWindow
         if homeWindow == nil {
             KORecordingCoordinator.sharedInstance.setupRecorder(propertiesManager: self.propertiesManager)
+            self.propertiesManager?.resetProperties()
             
             overlayWindow = KOOverlayWindow.init()
             overlayWindow?.setup(propertiesManager: self.propertiesManager)
@@ -153,29 +139,62 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         self.controlWindow?.setControlFrame()
     }
     
-    func beginRecording() {
-        NSStatusBar.system.removeStatusItem(statusItem)
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusItem.button?.title = "Stop"
-        statusItem.button?.target = self
-        statusItem.button?.action = #selector(stopRecording)
-        self.controlWindow?.isEnabled = true
+    func beginRecording(countDownCompletion: @escaping () -> ()) {
+        statusItem.button?.isEnabled = false
         self.homeWindowController?.window?.orderOut(nil)
+        
+        self.countDownWindow = KOCountDownWindow.init()
+        self.overlayWindow?.addChildWindow(countDownWindow!, ordered: .above)
+        self.countDownWindow?.level = .screenSaver
+        self.countDownWindow?.collectionBehavior = [.canJoinAllSpaces, .fullScreenNone, .transient]
+        self.countDownWindow?.orderFrontRegardless()
+        self.countDownWindow?.setupFrame()
+        
+        // Sets Count Down Indicator to the middle of the recording screen
+        if var rect = self.propertiesManager?.getCurrentScreenFrame() {
+            self.countDownWindow?.setFrameTopLeftPoint(NSPoint.init(x: rect.origin.x+rect.width/2-self.countDownWindow!.frame.size.width/2, y: rect.origin.y+rect.height/2+self.countDownWindow!.frame.height/2))
+        }
+
+        self.countDownWindow?.startCount {
+            self.countDownWindow?.orderOut(nil)
+            self.countDownWindow = nil
+            NSStatusBar.system.removeStatusItem(self.statusItem)
+            self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+            self.statusItem.button?.title = "Stop"
+            self.statusItem.button?.target = self
+            self.statusItem.button?.action = #selector(self.stopRecording)
+            self.controlWindow?.isEnabled = true
+            Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { (timer) in
+                timer.invalidate()
+                let startRecordSound : UInt32 = 1113
+                AudioServicesPlaySystemSound(startRecordSound)
+                countDownCompletion()
+            }
+        }
     }
     
     @objc func stopRecording() {
-        menu = NSMenu.init()
+        let stopRecordSound : UInt32 = 1114
+        AudioServicesPlaySystemSound(stopRecordSound)
+        
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem.button?.title = "Kaanoly"
-        self.setUpMenu()
-        KORecordingCoordinator.sharedInstance.endRecording()
-        KORecordingCoordinator.sharedInstance.destroyRecorder()
+        statusItem.menu = self.menu
         self.controlWindow?.orderOut(nil)
         self.controlWindow = nil
         self.overlayWindow?.orderOut(nil)
         self.overlayWindow = nil
         self.homeWindowController?.window = nil
         self.homeWindowController = nil
+        KORecordingCoordinator.sharedInstance.endRecording()
+        KORecordingCoordinator.sharedInstance.destroyRecorder()
+    }
+    
+    func updateRecentVideosList() {
+//        self.menu = NSMenu.init()
+//        self.setUpMenu()
+        self.menu = NSMenu.init()
+        self.setUpMenu(self.menu)
     }
     
     func pauseRecording() {
@@ -184,6 +203,11 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
     
     func resumeRecording() {
         KORecordingCoordinator.sharedInstance.resumeRecording()
+    }
+    
+    func cancelRecording() {
+        KORecordingCoordinator.sharedInstance.cancelRecording()
+        self.stopRecording()
     }
     
     func openPartOfScreenPicker() {
@@ -238,4 +262,50 @@ extension KOWindowsCoordinator : NSWindowDelegate {
             self.homeWindowController = nil
         }
     }
+}
+
+extension KOWindowsCoordinator : NSMenuDelegate {
+    
+    func setUpMenu(_ currMenu : NSMenu) {
+        let recentVideos = self.propertiesManager?.getRecentVideos() ?? []
+        if !recentVideos.isEmpty {
+            let item = NSMenuItem.init(title: "Recent Videos", action: nil, keyEquivalent: "")
+            currMenu.addItem(item)
+        }
+        for video in recentVideos {
+            let item = NSMenuItem.init(title: "Video", action: #selector(recentVideoSelected(_:)), keyEquivalent: "")
+            let itemView = KORecentLocalVideosMenuView.init(url: video)
+            itemView.autoresizingMask = [.width, .height]
+            item.view = itemView
+            item.target = self
+            currMenu.addItem(item)
+        }
+        
+        currMenu.addItem(NSMenuItem.separator())
+        
+        let recordItem = NSMenuItem.init(title: "Open Recording", action: #selector(openRecordingLobby), keyEquivalent: "r")
+        recordItem.target = self
+        currMenu.addItem(recordItem)
+        
+        let quitItem = NSMenuItem.init(title: "Quit", action: #selector(quitApp), keyEquivalent: "")
+        quitItem.target = self
+        currMenu.addItem(quitItem)
+        self.statusItem.menu = currMenu
+        currMenu.delegate = self
+    }
+    
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        menu.removeAllItems()
+        self.setUpMenu(menu)
+    }
+    
+    @objc func recentVideoSelected(_ item: NSMenuItem) {
+        if let url = (item.view as? KORecentLocalVideosMenuView)?.assetUrl {
+            NSWorkspace.shared.open(url)
+        }
+    }
+}
+
+extension KOWindowsCoordinator : NSUserNotificationCenterDelegate {
+    
 }

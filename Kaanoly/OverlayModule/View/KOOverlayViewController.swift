@@ -27,8 +27,6 @@ class KOOverlayViewController : NSViewController {
         super.viewDidLoad()
         self.view.wantsLayer = true
         self.view.layer?.masksToBounds = true
-//        self.view.layer?.borderColor = NSColor.red.cgColor
-//        self.view.layer?.borderWidth = 2
         if let screenFrame = self.presenterDelegate?.propertiesManager?.getCurrentScreenFrame() {
             self.view.frame = NSRect.init(x: 0, y: 0, width: screenFrame.width, height: screenFrame.height)
         }

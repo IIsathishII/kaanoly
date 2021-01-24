@@ -188,7 +188,7 @@ class KOHomeViewController : NSViewController {
 
     weak var propertiesManager : KOPropertiesDataManager? {
         didSet {
-//            self.setProperties()
+            self.setAdvancedMenuItemStates()
         }
     }
 
@@ -229,6 +229,25 @@ class KOHomeViewController : NSViewController {
         button.isBordered = false
         return button
     }()
+    
+    var advancedButton : NSButton = {
+        let button = NSButton.init()
+        button.setButtonType(.momentaryChange)
+        button.isBordered = false
+        button.imagePosition = .imageOnly
+        button.image = NSImage.init(named: "Advanced")!
+        return button
+    }()
+    var advancedMenu = NSMenu.init()
+    
+    var directoryButton : NSButton = {
+        let button = NSButton.init()
+        button.setButtonType(.momentaryChange)
+        button.isBordered = false
+        button.image = NSImage.init(named: "Directory")!
+        button.imagePosition = .imageOnly
+        return button
+    }()
 
     override func loadView() {
         self.view = NSView.init()
@@ -250,6 +269,8 @@ class KOHomeViewController : NSViewController {
         self.setVideoDropDown()
         self.setAudioDropDown()
         self.setRecordButton()
+        self.setAdvancedButton()
+        self.setDirectoryButton()
     }
     
     func setSourceButtons() {
@@ -293,16 +314,28 @@ class KOHomeViewController : NSViewController {
         ])
     }
     
-    func setScreenDropDown() {
+    func setScreenDropDownMenu() {
         var screenList = NSMenu.init()
         var screenNames = [String]()
         for i in 0..<NSScreen.screens.count {
             screenNames.append("Screen \(i+1)" + (NSScreen.screens[i].getDeviceName() != nil ? " (\(NSScreen.screens[i].getDeviceName()!))" : ""))
-            screenList.addItem(NSMenuItem.init(title: screenNames[i], action: nil, keyEquivalent: ""))
+            let item = NSMenuItem.init(title: screenNames[i], action: nil, keyEquivalent: "")
+            item.tag = i+1
+            item.target = self
+            item.action = #selector(didSelectScreenSource(_:))
+            screenList.addItem(item)
         }
-        screenList.addItem(NSMenuItem.init(title: "Part of Screen", action: nil, keyEquivalent: ""))
+        let item = NSMenuItem.init(title: "Part of Screen", action: nil, keyEquivalent: "")
+        item.tag = NSScreen.screens.count+1
+        item.target = self
+        item.action = #selector(didSelectScreenSource(_:))
+        screenList.addItem(item)
         self.screenDropDown.title = screenNames[0]
         self.screenDropDown.menu = screenList
+    }
+    
+    func setScreenDropDown() {
+        self.setScreenDropDownMenu()
         
         self.view.addSubview(self.screenLabel)
         self.screenLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -410,13 +443,62 @@ class KOHomeViewController : NSViewController {
         ])
     }
     
+    func setAdvancedButton() {
+        self.advancedButton.target = self
+        self.advancedButton.action  = #selector(showAdvancedMenu)
+        
+        advancedMenu = NSMenu.init()
+        var item = NSMenuItem.init(title: "Highlight mouse click", action: #selector(toggleHighlightMouseClick(_:)), keyEquivalent: "")
+        item.target = self
+        advancedMenu.addItem(item)
+        item = NSMenuItem.init(title: "Mirror camera", action: #selector(toggleMirrorCamera(_:)), keyEquivalent: "")
+        item.target = self
+        advancedMenu.addItem(item)
+
+        self.view.addSubview(self.advancedButton)
+        self.advancedButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            self.advancedButton.centerYAnchor.constraint(equalTo: self.recordButton.centerYAnchor),
+            self.advancedButton.leadingAnchor.constraint(equalTo: self.recordButton.trailingAnchor, constant: 40),
+            self.advancedButton.widthAnchor.constraint(equalToConstant: 36),
+            self.advancedButton.heightAnchor.constraint(equalToConstant: 36)
+        ])
+    }
+    
+    func setAdvancedMenuItemStates() {
+        for item in self.advancedMenu.items {
+            if item.action == #selector(toggleHighlightMouseClick(_:)) {
+                item.state = self.propertiesManager?.shouldCaptureMouseClick() == true ? .on : .off
+            } else if item.action == #selector(toggleMirrorCamera(_:)) {
+                item.state = self.propertiesManager?.getIsMirrored() == true ? .on : .off
+            }
+        }
+    }
+    
+    func setDirectoryButton() {
+        self.directoryButton.target = self
+        self.directoryButton.action  = #selector(didSelectDirectoryButton)
+        
+        self.view.addSubview(self.directoryButton)
+        self.directoryButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            self.directoryButton.centerYAnchor.constraint(equalTo: self.recordButton.centerYAnchor),
+            self.directoryButton.trailingAnchor.constraint(equalTo: self.recordButton.leadingAnchor, constant: -40),
+            self.directoryButton.widthAnchor.constraint(equalToConstant: 36),
+            self.directoryButton.heightAnchor.constraint(equalToConstant: 36)
+        ])
+    }
+    
     @objc func beginRecording() {
         self.isRecording = !self.isRecording
-        self.viewDelegate?.beginRecording()
-        if self.isRecording {
-            KORecordingCoordinator.sharedInstance.beginRecording()
-        } else {
-            KORecordingCoordinator.sharedInstance.endRecording()
+        self.viewDelegate?.beginRecording {
+            if self.isRecording {
+                KORecordingCoordinator.sharedInstance.beginRecording()
+            } else {
+                KORecordingCoordinator.sharedInstance.endRecording()
+            }
         }
     }
     
@@ -445,6 +527,17 @@ class KOHomeViewController : NSViewController {
         self.propertiesManager?.setSource(sources)
     }
     
+    @objc func didSelectScreenSource(_ item: NSMenuItem) {
+        item.state = .on
+        self.screenDropDown.title = item.title
+        if item.tag == self.screenDropDown.menu?.items.count {
+            self.viewDelegate?.openPartOfScreenPicker()
+        } else {
+            self.propertiesManager?.setCropped(Rect: nil, displayId: NSScreen.screens[item.tag-1].getScreenNumber()!)
+            self.propertiesManager?.setCurrentScreen(NSScreen.screens[item.tag-1])
+        }
+    }
+    
     @objc func didSelectVideoSource(_ item: NSMenuItem) {
         self.videoDropDown.menu?.items[self.selectedVideoSource-1].state = .off
         self.selectedVideoSource = item.tag
@@ -459,6 +552,24 @@ class KOHomeViewController : NSViewController {
         item.state = .on
         self.audioDropDown.title = item.title
         self.propertiesManager?.setCurrentAudio(Source: self.audioList[item.tag-1])
+    }
+    
+    @objc func showAdvancedMenu() {
+        advancedMenu.popUp(positioning: nil, at: NSPoint.init(x: 0, y: self.advancedButton.bounds.height), in: self.advancedButton)
+    }
+    
+    @objc func didSelectDirectoryButton() {
+        
+    }
+    
+    @objc func toggleHighlightMouseClick(_ item : NSMenuItem) {
+        item.state = item.state == .on ? .off : .on
+        self.propertiesManager?.setCaptureMouseClick(item.state == .on ? true : false)
+    }
+    
+    @objc func toggleMirrorCamera(_ item : NSMenuItem) {
+        item.state = item.state == .on ? .off : .on
+        self.propertiesManager?.setIsMirrored(item.state == .on ? true : false)
     }
 }
 

@@ -192,18 +192,20 @@ class KOMultimediaRecorder : NSObject {
     func endRecording() {
         self.isRecording = false
         assetWriter?.finishWriting {
-            if self.assetWriter?.status == .failed || self.assetWriter?.status == .cancelled {
-                if FileManager.default.fileExists(atPath: self.recordingDest.path) {
-                    do {
-                        try FileManager.default.removeItem(at: self.recordingDest)
-                    } catch {
-                        print("Error deleting existing file")
+            DispatchQueue.main.sync {
+                if self.assetWriter?.status == .failed || self.assetWriter?.status == .cancelled {
+                    if FileManager.default.fileExists(atPath: self.recordingDest.path) {
+                        do {
+                            try FileManager.default.removeItem(at: self.recordingDest)
+                        } catch {
+                            print("Error deleting existing file")
+                        }
                     }
+                    return
                 }
-                return
+                self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
+    //            self.propertiesManager?.getStorageDirectory()?.stopAccessingSecurityScopedResource()
             }
-            self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
-//            self.propertiesManager?.getStorageDirectory()?.stopAccessingSecurityScopedResource()
         }
     }
     
@@ -215,6 +217,11 @@ class KOMultimediaRecorder : NSObject {
         self.isRecording = true
         self.didJustResumeVideo = true
         self.didJustResumeAudio = true
+    }
+    
+    func cancelRecording() {
+        self.isRecording = false
+        assetWriter?.cancelWriting()
     }
     
 }

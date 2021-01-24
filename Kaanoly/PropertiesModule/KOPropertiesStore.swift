@@ -39,12 +39,23 @@ class KOPropertiesStore : NSObject {
         get {
             var recentVideos = [URL]()
             if let storedRecentVideos = UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.recentVideos) as? [Data] {
-                let recentVideoUrls = storedRecentVideos.compactMap { (video) -> URL? in
+                    let recentVideoUrls = storedRecentVideos.compactMap { (video) -> URL? in
                     var isStale = false
                     //TODO:: Remove stale urls : Deleted or moved
                     if let videoUrl = try? URL.init(resolvingBookmarkData: video, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale) {
                         if !isStale {
                             return videoUrl
+                        } else {
+                            self.getStorageDirectory()?.startAccessingSecurityScopedResource()
+                            if let data = try? videoUrl.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil) {
+                                var newIsStale = false
+                                if let newUrl = try? URL.init(resolvingBookmarkData: data, bookmarkDataIsStale: &newIsStale) {
+                                    videoUrl.stopAccessingSecurityScopedResource()
+                                    return newUrl
+                                } else {
+                                    
+                                }
+                            }
                         }
                     }
                     return nil
@@ -170,6 +181,7 @@ extension KOPropertiesStore : KOPropertiesDataManager {
             }
             recentVideos.insert(data, at: 0)
             UserDefaults.standard.setValue(recentVideos, forKey: KOUserDefaultKeyConstants.recentVideos)
+            self.viewDelegate?.updateRecentVideosList()
         }
     }
     
@@ -192,5 +204,10 @@ extension KOPropertiesStore : KOPropertiesDataManager {
     
     func isRecordingPartOfWindow() -> Bool {
         return self.croppedRect != nil
+    }
+    
+    func resetProperties() {
+        self.screenId = NSScreen.screens[0].getScreenNumber()
+        self.croppedRect = nil
     }
 }
