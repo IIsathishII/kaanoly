@@ -271,6 +271,7 @@ class KOHomeViewController : NSViewController {
         self.setRecordButton()
         self.setAdvancedButton()
         self.setDirectoryButton()
+        NotificationCenter.default.addObserver(self, selector: #selector(handleScreenChange(_:)), name: NSApplication.didChangeScreenParametersNotification, object: nil)
     }
     
     func setSourceButtons() {
@@ -320,6 +321,9 @@ class KOHomeViewController : NSViewController {
         for i in 0..<NSScreen.screens.count {
             screenNames.append("Screen \(i+1)" + (NSScreen.screens[i].getDeviceName() != nil ? " (\(NSScreen.screens[i].getDeviceName()!))" : ""))
             let item = NSMenuItem.init(title: screenNames[i], action: nil, keyEquivalent: "")
+            if i == 0 {
+                item.state = .on
+            }
             item.tag = i+1
             item.target = self
             item.action = #selector(didSelectScreenSource(_:))
@@ -332,6 +336,11 @@ class KOHomeViewController : NSViewController {
         screenList.addItem(item)
         self.screenDropDown.title = screenNames[0]
         self.screenDropDown.menu = screenList
+    }
+    
+    @objc func handleScreenChange(_ notification: Notification) {
+        self.screenDropDown.menu?.cancelTracking()
+        self.setScreenDropDownMenu()
     }
     
     func setScreenDropDown() {
@@ -528,6 +537,9 @@ class KOHomeViewController : NSViewController {
     }
     
     @objc func didSelectScreenSource(_ item: NSMenuItem) {
+        for item in self.screenDropDown.menu!.items {
+            item.state = .off
+        }
         item.state = .on
         self.screenDropDown.title = item.title
         if item.tag == self.screenDropDown.menu?.items.count {
@@ -570,6 +582,10 @@ class KOHomeViewController : NSViewController {
     @objc func toggleMirrorCamera(_ item : NSMenuItem) {
         item.state = item.state == .on ? .off : .on
         self.propertiesManager?.setIsMirrored(item.state == .on ? true : false)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: NSApplication.didChangeScreenParametersNotification, object: nil)
     }
 }
 

@@ -77,6 +77,15 @@ class KOPropertiesStore : NSObject {
 //        })
 //        self.storageDirectory?.stopAccessingSecurityScopedResource()
 //        self.clearUserDefaults()
+        NotificationCenter.default.addObserver(self, selector: #selector(handleScreenChange(_:)), name: NSApplication.didChangeScreenParametersNotification, object: nil)
+    }
+    
+    @objc func handleScreenChange(_ notification: Notification) {
+        if !NSScreen.screens.contains(where: { $0.getScreenNumber() == self.screenId }) && self.getSource().contains(.screen) {
+            let screen = NSScreen.screens[0]
+            self.screenId = screen.getScreenNumber()
+            self.viewDelegate?.stopRecordingAbruptly()
+        }
     }
     
     func clearUserDefaults() {
@@ -85,6 +94,7 @@ class KOPropertiesStore : NSObject {
     }
     
     deinit {
+        NotificationCenter.default.removeObserver(self, name: NSApplication.didChangeScreenParametersNotification, object: nil)
         self.storageDirectory?.stopAccessingSecurityScopedResource()
     }
 }

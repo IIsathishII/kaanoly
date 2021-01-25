@@ -190,6 +190,17 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         KORecordingCoordinator.sharedInstance.destroyRecorder()
     }
     
+    func stopRecordingAbruptly() {
+        self.stopRecording()
+
+        let alert = NSAlert.init()
+        alert.addButton(withTitle: "OK")
+        alert.messageText = "Recording Stopped"
+        alert.informativeText = "The recording has been stopped as the screen being recorded was disconnected."
+        alert.alertStyle = .warning
+        alert.runModal()
+    }
+    
     func updateRecentVideosList() {
 //        self.menu = NSMenu.init()
 //        self.setUpMenu()

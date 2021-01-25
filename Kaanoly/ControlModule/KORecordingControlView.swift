@@ -81,6 +81,11 @@ class KORecordingControlView : NSView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func updateLayer() {
+        self.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+        self.layer?.borderColor = NSColor.init(named: "recordingControlBorder")?.cgColor
+    }
+    
     func setup(coordinatorDelegate: KOWindowsCoordinatorDelegate?) {
         self.coordinatorDelegate = coordinatorDelegate
     }

@@ -12,7 +12,7 @@ class KOHomeDropDownButton : NSButton {
     
     override var title: String {
         didSet {
-            self.attributedTitle = NSAttributedString.init(string: self.title, attributes: [NSAttributedString.Key.font: NSFont.systemFont(ofSize: 13), NSAttributedString.Key.foregroundColor: NSColor.white])
+            self.attributedTitle = NSAttributedString.init(string: self.title, attributes: [NSAttributedString.Key.font: NSFont.systemFont(ofSize: 13), NSAttributedString.Key.foregroundColor: NSColor.textColor])
         }
     }
     
@@ -36,9 +36,9 @@ class KOHomeDropDownButton : NSButton {
         self.focusRingType = .none
         self.layer?.cornerRadius = 4
         self.layer?.borderWidth = 0.5
-        self.layer?.borderColor = NSColor.white.cgColor
+        self.layer?.borderColor = NSColor.init(named: "homeDropDownBorderColor")!.cgColor
         self.target = self
-        self.action = #selector(buttonPressed)
+        self.action = #selector(buttonPressed(_:))
         self.image = NSImage.init(named: "Drop_down_arrow")
         self.setTrackingArea()
     }
@@ -48,7 +48,8 @@ class KOHomeDropDownButton : NSButton {
     }
     
     override func draw(_ dirtyRect: NSRect) {
-        NSColor.init(red: 26/255, green: 26/255, blue: 26/255, alpha: 1).setFill()
+        self.layer?.borderColor = NSColor.init(named: "homeDropDownBorderColor")!.cgColor
+        NSColor.init(named: "homeDropDownBgColor")!.setFill()
         dirtyRect.fill()
         let origin = self.bounds.insetBy(dx: 12, dy: 7).origin
         self.attributedTitle.draw(in: NSRect.init(origin: origin, size: NSSize.init(width: self.attributedTitle.size().width, height: 16)))
@@ -60,7 +61,7 @@ class KOHomeDropDownButton : NSButton {
         self.menu?.minimumWidth = self.frame.size.width
     }
     
-    @objc func buttonPressed() {
+    @objc func buttonPressed(_ sender: Any) {
         self.menu?.popUp(positioning: nil, at: NSPoint.init(x: 0, y: self.frame.size.height), in: self)
     }
     
@@ -85,5 +86,9 @@ class KOHomeDropDownButton : NSButton {
     override func mouseExited(with event: NSEvent) {
         super.mouseExited(with: event)
         NSCursor.arrow.set()
+    }
+    
+    override func rightMouseDown(with event: NSEvent) {
+        
     }
 }

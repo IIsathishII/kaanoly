@@ -14,6 +14,8 @@ class KORecordingCoordinator {
     private var recorder: KOMultimediaRecorder?
     static let sharedInstance = KORecordingCoordinator.init()
     
+    var isRecording = false
+    
     weak var propertiesManager : KOPropertiesDataManager?
     
     private init() {
@@ -39,10 +41,12 @@ class KORecordingCoordinator {
     }
     
     func beginRecording() {
+        self.isRecording = true
         KORecordingCoordinator.sharedInstance.recorder?.beginRecording()
     }
     
     func endRecording() {
+        self.isRecording = false
         KORecordingCoordinator.sharedInstance.recorder?.endRecording()
     }
     
@@ -55,6 +59,7 @@ class KORecordingCoordinator {
     }
     
     func cancelRecording() {
+        self.isRecording = false
         KORecordingCoordinator.sharedInstance.recorder?.cancelRecording()
     }
     
