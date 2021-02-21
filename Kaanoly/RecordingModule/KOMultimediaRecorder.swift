@@ -316,13 +316,13 @@ extension KOMultimediaRecorder : AVCaptureVideoDataOutputSampleBufferDelegate, A
             dimension.height = CGFloat(videoDimension.height)
         }
         assetWriter = try? AVAssetWriter.init(url: recordingDest, fileType: .mp4)
-        videoWriterInput = AVAssetWriterInput.init(mediaType: .video, outputSettings: [ AVVideoCodecKey: AVVideoCodecType.h264.rawValue, AVVideoWidthKey: dimension.width, AVVideoHeightKey: dimension.height, AVVideoCompressionPropertiesKey: [AVVideoAverageBitRateKey: 2300000]])
+        videoWriterInput = AVAssetWriterInput.init(mediaType: .video, outputSettings: [ AVVideoCodecKey: AVVideoCodecType.h264.rawValue, AVVideoWidthKey: dimension.width, AVVideoHeightKey: dimension.height])//, AVVideoCompressionPropertiesKey: [AVVideoAverageBitRateKey: 2300000]
         videoWriterInput?.expectsMediaDataInRealTime = true
         if assetWriter!.canAdd(videoWriterInput!) {
             assetWriter?.add(videoWriterInput!)
         }
         
-        audioWriterInput = AVAssetWriterInput.init(mediaType: .audio, outputSettings: [ AVFormatIDKey: kAudioFormatMPEG4AAC, AVNumberOfChannelsKey: 1, AVSampleRateKey: 44100, AVEncoderBitRateKey: 64000,])
+        audioWriterInput = AVAssetWriterInput.init(mediaType: .audio, outputSettings: [ AVFormatIDKey: kAudioFormatMPEG4AAC, AVNumberOfChannelsKey: 2, AVSampleRateKey: 44100, AVEncoderBitRateKey: 64000,])
         audioWriterInput?.expectsMediaDataInRealTime = true
         if assetWriter!.canAdd(audioWriterInput!) {
             assetWriter?.add(audioWriterInput!)
