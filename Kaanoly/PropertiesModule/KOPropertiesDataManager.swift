@@ -16,6 +16,9 @@ protocol KOPropertiesDataManager : class {
     func getStorageDirectory() -> URL?
     func setStorageDirectory(_ val: URL)
     
+    func getIsCloudDirectory() -> Bool
+    func setIsCloudDirectory(_ val: Bool)
+    
     func getSource() -> KOMediaSettings.MediaSource
     func setSource(_ source: KOMediaSettings.MediaSource)
     

@@ -240,7 +240,7 @@ class KOHomeViewController : NSViewController {
     }()
     var advancedMenu = NSMenu.init()
     
-    var directoryButton : NSButton = {
+    var locationButton : NSButton = {
         let button = NSButton.init()
         button.setButtonType(.momentaryChange)
         button.isBordered = false
@@ -248,6 +248,7 @@ class KOHomeViewController : NSViewController {
         button.imagePosition = .imageOnly
         return button
     }()
+    var locationMenu = NSMenu.init()
 
     override func loadView() {
         self.view = NSView.init()
@@ -270,7 +271,7 @@ class KOHomeViewController : NSViewController {
         self.setAudioDropDown()
         self.setRecordButton()
         self.setAdvancedButton()
-        self.setDirectoryButton()
+        self.setLocationButton()
         NotificationCenter.default.addObserver(self, selector: #selector(handleScreenChange(_:)), name: NSApplication.didChangeScreenParametersNotification, object: nil)
     }
     
@@ -485,18 +486,24 @@ class KOHomeViewController : NSViewController {
         }
     }
     
-    func setDirectoryButton() {
-        self.directoryButton.target = self
-        self.directoryButton.action  = #selector(didSelectDirectoryButton)
+    func setLocationButton() {
+        self.locationButton.target = self
+        self.locationButton.action  = #selector(didSelectDirectoryButton)
         
-        self.view.addSubview(self.directoryButton)
-        self.directoryButton.translatesAutoresizingMaskIntoConstraints = false
+        locationMenu = NSMenu.init()
+        var item = NSMenuItem.init(title: "Select a directory", action: nil, keyEquivalent: "")
+        locationMenu.addItem(item)
+        item = NSMenuItem.init(title: "iCloud", action: nil, keyEquivalent: "")
+        locationMenu.addItem(item)
+        
+        self.view.addSubview(self.locationButton)
+        self.locationButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            self.directoryButton.centerYAnchor.constraint(equalTo: self.recordButton.centerYAnchor),
-            self.directoryButton.trailingAnchor.constraint(equalTo: self.recordButton.leadingAnchor, constant: -40),
-            self.directoryButton.widthAnchor.constraint(equalToConstant: 36),
-            self.directoryButton.heightAnchor.constraint(equalToConstant: 36)
+            self.locationButton.centerYAnchor.constraint(equalTo: self.recordButton.centerYAnchor),
+            self.locationButton.trailingAnchor.constraint(equalTo: self.recordButton.leadingAnchor, constant: -40),
+            self.locationButton.widthAnchor.constraint(equalToConstant: 36),
+            self.locationButton.heightAnchor.constraint(equalToConstant: 36)
         ])
     }
     
@@ -571,7 +578,7 @@ class KOHomeViewController : NSViewController {
     }
     
     @objc func didSelectDirectoryButton() {
-        
+        locationMenu.popUp(positioning: nil, at: NSPoint.init(x: 0, y: self.locationButton.bounds.height), in: self.locationButton)
     }
     
     @objc func toggleHighlightMouseClick(_ item : NSMenuItem) {

@@ -74,11 +74,14 @@ class KOMultimediaRecorder : NSObject {
     
     func setup(propertiesManager: KOPropertiesDataManager?) {
         self.propertiesManager = propertiesManager
-        if let url = self.propertiesManager?.getStorageDirectory() {
-            let formatter = DateFormatter.init()
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .medium
-            let dateTime = formatter.string(from: Date.init())
+        let formatter = DateFormatter.init()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .medium
+        let dateTime = formatter.string(from: Date.init())
+        if let isCloudDirectory = self.propertiesManager?.getIsCloudDirectory(), isCloudDirectory {
+            let url = FileManager.default.homeDirectoryForCurrentUser
+            self.recordingDest = url.appendingPathComponent("Xplnr Video Message \(dateTime).mov")
+        } else if let url = self.propertiesManager?.getStorageDirectory() {
             url.startAccessingSecurityScopedResource()
             self.recordingDest = url.appendingPathComponent("Xplnr Video Message \(dateTime).mov")
         }
@@ -203,7 +206,28 @@ class KOMultimediaRecorder : NSObject {
                     }
                     return
                 }
-                self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
+                if self.propertiesManager?.getIsCloudDirectory() == true {
+                    DispatchQueue.global().async {
+                        let containerUrl = FileManager.default.url(forUbiquityContainerIdentifier: nil)
+                        if let iCloudDocsUrl = containerUrl?.appendingPathComponent("Documents") {
+                            let iCloudFile = iCloudDocsUrl.appendingPathComponent(self.recordingDest.lastPathComponent)
+                            if !FileManager.default.fileExists(atPath: iCloudDocsUrl.path, isDirectory: nil) {
+                                try? FileManager.default.createDirectory(at: iCloudDocsUrl, withIntermediateDirectories: true, attributes: nil)
+                            }
+                            do {
+                                try FileManager.default.copyItem(at: self.recordingDest, to: iCloudFile)
+                                try FileManager.default.removeItem(at: self.recordingDest)
+                                self.recordingDest = iCloudFile
+                            } catch {
+                                print("Error in copying file to iCloud")
+                                return
+                            }
+                        }
+                    }
+                    self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
+                } else {
+                    self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
+                }
     //            self.propertiesManager?.getStorageDirectory()?.stopAccessingSecurityScopedResource()
             }
         }

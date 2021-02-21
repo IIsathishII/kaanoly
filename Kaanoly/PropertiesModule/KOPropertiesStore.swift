@@ -33,6 +33,7 @@ class KOPropertiesStore : NSObject {
         }
         return nil
     }()
+    private var isCloudDirectory : Bool = (UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.isCloudDirectory) as? Bool) ?? true
     private var croppedRect : NSRect?
     
     private var recentVideos : [URL] {
@@ -46,7 +47,7 @@ class KOPropertiesStore : NSObject {
                         if !isStale {
                             return videoUrl
                         } else {
-                            self.getStorageDirectory()?.startAccessingSecurityScopedResource()
+//                            self.getStorageDirectory()?.startAccessingSecurityScopedResource()
                             if let data = try? videoUrl.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil) {
                                 var newIsStale = false
                                 if let newUrl = try? URL.init(resolvingBookmarkData: data, bookmarkDataIsStale: &newIsStale) {
@@ -114,6 +115,14 @@ extension KOPropertiesStore : KOPropertiesDataManager {
         } else {
             //TODO:: Error handling.
         }
+    }
+    
+    func getIsCloudDirectory() -> Bool {
+        return self.isCloudDirectory
+    }
+    
+    func setIsCloudDirectory(_ val: Bool) {
+        self.isCloudDirectory = val
     }
     
     func getSource() -> KOMediaSettings.MediaSource {
