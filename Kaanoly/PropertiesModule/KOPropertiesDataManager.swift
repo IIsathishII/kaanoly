@@ -14,7 +14,7 @@ protocol KOPropertiesDataManager : class {
     var viewDelegate: KOWindowsCoordinatorDelegate? { get set }
     
     func getStorageDirectory() -> URL?
-    func setStorageDirectory(_ val: URL)
+    func setStorageDirectory(_ val: URL?)
     
     func getIsCloudDirectory() -> Bool
     func setIsCloudDirectory(_ val: Bool)

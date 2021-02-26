@@ -66,14 +66,16 @@ class KOMultimediaRecorder : NSObject {
         screenCaptureSession = nil; cameraCaptureSession = nil
         camera = nil; microphone = nil
         screenInput = nil; cameraInput = nil; audioInput = nil
-//        cameraPreview = nil
-//        cameraPreview?.session = nil
         videoOutput = nil; audioOutput = nil
         self.isPrepared = false
     }
     
     func setup(propertiesManager: KOPropertiesDataManager?) {
         self.propertiesManager = propertiesManager
+        self.setupRecorder()
+    }
+    
+    func setRecordingDestination() {
         let formatter = DateFormatter.init()
         formatter.dateStyle = .medium
         formatter.timeStyle = .medium
@@ -85,10 +87,10 @@ class KOMultimediaRecorder : NSObject {
             url.startAccessingSecurityScopedResource()
             self.recordingDest = url.appendingPathComponent("Xplnr Video Message \(dateTime).mov")
         }
-        self.setupRecorder()
     }
     
     func setupRecorder() {
+        self.setRecordingDestination()
         guard let sources = self.propertiesManager?.getSource(), let displayId = self.propertiesManager?.getCurrentScreen()?.deviceDescription[NSDeviceDescriptionKey.init("NSScreenNumber")] as? CGDirectDisplayID else { return }
         if sources.contains(.screen) {
             screenCaptureSession = AVCaptureSession.init()

@@ -33,7 +33,14 @@ class KOPropertiesStore : NSObject {
         }
         return nil
     }()
-    private var isCloudDirectory : Bool = (UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.isCloudDirectory) as? Bool) ?? true
+    private var isCloudDirectory : Bool = {
+       var isiCloudAvailable = false
+        isiCloudAvailable = (UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.isCloudDirectory) as? Bool) ?? isiCloudAvailable
+        if isiCloudAvailable && FileManager.default.ubiquityIdentityToken == nil {
+            isiCloudAvailable = false
+        }
+        return isiCloudAvailable
+    }()
     private var croppedRect : NSRect?
     
     private var recentVideos : [URL] {
@@ -72,12 +79,6 @@ class KOPropertiesStore : NSObject {
     
     override init() {
         super.init()
-//        self.screen = NSScreen.screens[0]
-//        KOObjectSubscriber.onObjectDeinit(forObject: self.screen!, callbackId: "", callback: {
-//            self.screen = NSScreen.screens[0]
-//        })
-//        self.storageDirectory?.stopAccessingSecurityScopedResource()
-//        self.clearUserDefaults()
         NotificationCenter.default.addObserver(self, selector: #selector(handleScreenChange(_:)), name: NSApplication.didChangeScreenParametersNotification, object: nil)
     }
     
@@ -106,11 +107,17 @@ extension KOPropertiesStore : KOPropertiesDataManager {
         return self.storageDirectory
     }
     
-    func setStorageDirectory(_ val: URL) {
+    func setStorageDirectory(_ val: URL?) {
 //        self.storageDirectory?.stopAccessingSecurityScopedResource()
         self.storageDirectory = val
-        if let data = try? val.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil) {
+        if val == nil {
+            UserDefaults.standard.removeObject(forKey: KOUserDefaultKeyConstants.storageDirectory)
+            return
+        }
+        if let data = try? val!.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil) {
             UserDefaults.standard.setValue(data, forKey: KOUserDefaultKeyConstants.storageDirectory)
+            self.setIsCloudDirectory(false)
+            KORecordingCoordinator.sharedInstance.modifyRecorder(propertiesManager: self)
 //            val.startAccessingSecurityScopedResource()
         } else {
             //TODO:: Error handling.
@@ -123,6 +130,12 @@ extension KOPropertiesStore : KOPropertiesDataManager {
     
     func setIsCloudDirectory(_ val: Bool) {
         self.isCloudDirectory = val
+        UserDefaults.standard.setValue(val, forKey: KOUserDefaultKeyConstants.isCloudDirectory)
+        if !val {
+            return
+        }
+        self.setStorageDirectory(nil)
+        KORecordingCoordinator.sharedInstance.modifyRecorder(propertiesManager: self)
     }
     
     func getSource() -> KOMediaSettings.MediaSource {

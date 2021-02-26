@@ -25,4 +25,7 @@ protocol KOWindowsCoordinatorDelegate : class {
     func clearPartOfScreenSelectionsInAllScreens()
     
     func stopRecordingAbruptly()
+    
+    func didOpenDirectoryPanel()
+    func didCloseDirectoryPanel()
 }

@@ -51,14 +51,7 @@ import AVFoundation
 //    }
 //
 //    @objc func selectFolderLocation() {
-//        let openPanel = NSOpenPanel.init()
-//        openPanel.canCreateDirectories = true
-//        openPanel.canChooseDirectories = true
-//        openPanel.canChooseFiles = false
-////        openPanel.level = self.view.window!.level
-//        let response = openPanel.runModal()
-//        self.propertiesManager?.setStorageDirectory(openPanel.url!)
-//        print("Response :::: ", response)
+        
 //    }
 //
 //    func setOpenButton() {
@@ -189,6 +182,7 @@ class KOHomeViewController : NSViewController {
     weak var propertiesManager : KOPropertiesDataManager? {
         didSet {
             self.setAdvancedMenuItemStates()
+            self.setLocationState()
         }
     }
 
@@ -222,8 +216,8 @@ class KOHomeViewController : NSViewController {
         return list
     }()
     
-    var recordButton : KORecordButton = {
-        let button = KORecordButton.init()
+    var recordButton : NSButton = {
+        let button = NSButton.init()
         button.image = NSImage.init(named: "Record")!
         button.imagePosition = .imageOnly
         button.isBordered = false
@@ -244,9 +238,15 @@ class KOHomeViewController : NSViewController {
         let button = NSButton.init()
         button.setButtonType(.momentaryChange)
         button.isBordered = false
-        button.image = NSImage.init(named: "Directory")!
+        button.image = NSImage.init(named: "Directory_unselected")!
         button.imagePosition = .imageOnly
         return button
+    }()
+    var locationLabel : NSTextField = {
+        let label = NSTextField.init(labelWithString: "")
+        label.font = NSFont.systemFont(ofSize: 9, weight: .light)
+        label.alignment = .center
+        return label
     }()
     var locationMenu = NSMenu.init()
 
@@ -490,24 +490,83 @@ class KOHomeViewController : NSViewController {
         self.locationButton.target = self
         self.locationButton.action  = #selector(didSelectDirectoryButton)
         
+        self.locationLabel.usesSingleLineMode = false
+        self.locationLabel.maximumNumberOfLines = 2
+        self.locationLabel.cell?.wraps = true
+        
         locationMenu = NSMenu.init()
-        var item = NSMenuItem.init(title: "Select a directory", action: nil, keyEquivalent: "")
-        locationMenu.addItem(item)
-        item = NSMenuItem.init(title: "iCloud", action: nil, keyEquivalent: "")
-        locationMenu.addItem(item)
+        locationMenu.delegate = self
         
         self.view.addSubview(self.locationButton)
+        self.view.addSubview(self.locationLabel)
         self.locationButton.translatesAutoresizingMaskIntoConstraints = false
+        self.locationLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             self.locationButton.centerYAnchor.constraint(equalTo: self.recordButton.centerYAnchor),
             self.locationButton.trailingAnchor.constraint(equalTo: self.recordButton.leadingAnchor, constant: -40),
             self.locationButton.widthAnchor.constraint(equalToConstant: 36),
-            self.locationButton.heightAnchor.constraint(equalToConstant: 36)
+            self.locationButton.heightAnchor.constraint(equalToConstant: 36),
+            
+            self.locationLabel.leadingAnchor.constraint(equalTo: self.locationButton.leadingAnchor, constant: -12),
+            self.locationLabel.trailingAnchor.constraint(equalTo: self.locationButton.trailingAnchor, constant: 12),
+            self.locationLabel.topAnchor.constraint(equalTo: self.locationButton.bottomAnchor, constant: 2)
         ])
     }
     
+    @objc func selectCloudStorage() {
+        self.propertiesManager?.setIsCloudDirectory(true)
+        self.setLocationState()
+    }
+    
+    @objc func selectLocalStorage() {
+        let openPanel = NSOpenPanel.init()
+        openPanel.canCreateDirectories = true
+        openPanel.canChooseDirectories = true
+        openPanel.canChooseFiles = false
+        self.viewDelegate?.didOpenDirectoryPanel()
+        let response = openPanel.runModal()
+        self.viewDelegate?.didCloseDirectoryPanel()
+        if let directory = openPanel.url {
+            self.propertiesManager?.setStorageDirectory(openPanel.url!)
+            self.setLocationState()
+        }
+    }
+    
+    func setLocationState() {
+        if self.propertiesManager?.getIsCloudDirectory() == true || self.propertiesManager?.getStorageDirectory() != nil {
+            self.locationButton.image = NSImage.init(named: "Directory")
+            if self.propertiesManager?.getIsCloudDirectory() == true {
+                self.locationLabel.stringValue = "iCloud"
+            } else {
+                self.locationLabel.stringValue = "\(self.propertiesManager!.getStorageDirectory()!.lastPathComponent)abcdefghijklmnopqrstuvw"
+            }
+        } else {
+            self.locationButton.image = NSImage.init(named: "Directory_unselected")
+            self.locationLabel.stringValue = "Select a storage location"
+        }
+    }
+    
+    func isStorageLocationAvailable() -> Bool {
+        if self.propertiesManager?.getIsCloudDirectory() == true {
+            return true
+        }
+        if let url = self.propertiesManager?.getStorageDirectory() {
+            return true
+        }
+        return false
+    }
+    
     @objc func beginRecording() {
+        if !self.isStorageLocationAvailable() {
+            self.viewDelegate?.didOpenDirectoryPanel()
+            let alert = NSAlert.init()
+            alert.messageText = "Please Select a storage location(iCloud/Local directory) to begin recording"
+            alert.runModal()
+            self.viewDelegate?.didCloseDirectoryPanel()
+            self.didSelectDirectoryButton()
+            return
+        }
         self.isRecording = !self.isRecording
         self.viewDelegate?.beginRecording {
             if self.isRecording {
@@ -596,17 +655,23 @@ class KOHomeViewController : NSViewController {
     }
 }
 
-class KORecordButton : NSButton {
+extension KOHomeViewController : NSMenuDelegate {
     
-    override func mouseDown(with event: NSEvent) {
-        self.image?.size = self.image?.size.applying(CGAffineTransform.init(scaleX: 0.8, y: 0.8)) ?? .zero
-//        self.layer?.setAffineTransform(CGAffineTransform.init(scaleX: 0.8, y: 0.8))
-        super.mouseDown(with: event)
-    }
-    
-    override func mouseUp(with event: NSEvent) {
-        self.image?.size = self.image?.size.applying(CGAffineTransform.init(scaleX: 1.25, y: 1.25)) ?? .zero
-//        self.layer?.setAffineTransform(CGAffineTransform.init(scaleX: 1.25, y: 1.25))
-        super.mouseUp(with: event)
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        menu.removeAllItems()
+        
+        var item = NSMenuItem.init(title: "iCloud", action: #selector(selectCloudStorage), keyEquivalent: "")
+        item.target = self
+        item.state = self.propertiesManager?.getIsCloudDirectory() == true ? .on : .off
+        menu.addItem(item)
+        menu.addItem(NSMenuItem.separator())
+        if let directory = self.propertiesManager?.getStorageDirectory() {
+            item = NSMenuItem.init(title: directory.path, action: nil, keyEquivalent: "")
+            item.state = .on
+            menu.addItem(item)
+        }
+        item = NSMenuItem.init(title: "Select a directory", action: #selector(selectLocalStorage), keyEquivalent: "")
+        item.target = self
+        menu.addItem(item)
     }
 }

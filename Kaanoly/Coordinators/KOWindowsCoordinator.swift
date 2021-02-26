@@ -257,6 +257,18 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
             self.partOfScreenPickerWindows[key]?.pickerViewController.clearPartOfScreenSelection()
         }
     }
+    
+    func didOpenDirectoryPanel() {
+        self.overlayWindow?.orderOut(nil)
+        self.controlWindow?.orderOut(nil)
+        self.homeWindowController?.window?.orderOut(nil)
+    }
+    
+    func didCloseDirectoryPanel() {
+        self.overlayWindow?.orderFrontRegardless()
+        self.controlWindow?.orderFrontRegardless()
+        self.homeWindowController?.window?.orderFrontRegardless()
+    }
 }
 
 extension KOWindowsCoordinator : NSWindowDelegate {
