@@ -209,7 +209,7 @@ class KOMultimediaRecorder : NSObject {
                     return
                 }
                 if self.propertiesManager?.getIsCloudDirectory() == true {
-                    DispatchQueue.global().async {
+                    DispatchQueue.global().sync {
                         let containerUrl = FileManager.default.url(forUbiquityContainerIdentifier: nil)
                         if let iCloudDocsUrl = containerUrl?.appendingPathComponent("Documents") {
                             let iCloudFile = iCloudDocsUrl.appendingPathComponent(self.recordingDest.lastPathComponent)
@@ -217,8 +217,7 @@ class KOMultimediaRecorder : NSObject {
                                 try? FileManager.default.createDirectory(at: iCloudDocsUrl, withIntermediateDirectories: true, attributes: nil)
                             }
                             do {
-                                try FileManager.default.copyItem(at: self.recordingDest, to: iCloudFile)
-                                try FileManager.default.removeItem(at: self.recordingDest)
+                                try FileManager.default.setUbiquitous(true, itemAt: self.recordingDest, destinationURL: iCloudFile)
                                 self.recordingDest = iCloudFile
                             } catch {
                                 print("Error in copying file to iCloud")
@@ -226,7 +225,7 @@ class KOMultimediaRecorder : NSObject {
                             }
                         }
                     }
-                    self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
+//                    self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
                 } else {
                     self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
                 }

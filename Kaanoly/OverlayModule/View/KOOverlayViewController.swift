@@ -96,7 +96,7 @@ extension KOOverlayViewController : KOOverlayViewDelegate {
     func resetCameraPreviewPosition() {
         guard let scale = self.presenterDelegate?.getPreviewScale(), let screenFrame = self.presenterDelegate?.propertiesManager?.getCurrentScreenFrame() else { return }
         let size = KORecordingCoordinator.sharedInstance.getPreviewLayerSize()
-        let width = screenFrame.width * scale
+        let width = max(screenFrame.width * scale, CGFloat(self.cameraPreviewController!.previewView.minPreviewWidth))
         let height = width * CGFloat(size.1)/CGFloat(size.0)
         var previewFrame = NSRect.init(x: CameraPreviewConstants.horizontalSpacing, y: screenFrame.height-height-CameraPreviewConstants.verticalSpacing, width: width, height: height)
         self.dimView?.removeFromSuperview()

@@ -14,6 +14,8 @@ class KOCameraPreviewMovableView : NSFlippedView {
     
     var cursorPos : CameraPreviewConstants.CursorPosition? = nil
     
+    var minPreviewWidth = 150
+    
     init() {
         super.init(frame: .zero)
         self.setResizeTrackingArea()

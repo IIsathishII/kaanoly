@@ -29,7 +29,7 @@ extension KOCameraPreviewMovableView {
         let height =  width * CGFloat(size.1)/CGFloat(size.0)
         var newWidth = (width + delX)
         let maxWidth = CameraPreviewConstants.Size.maxScale * screenFrame.width
-        let minWidth = CameraPreviewConstants.Size.minScale * screenFrame.width
+        let minWidth = max(CameraPreviewConstants.Size.minScale * screenFrame.width, CGFloat(minPreviewWidth))
         var delWidth = delX
         var delHeight = delX*CGFloat(size.1)/CGFloat(size.0)
         if let holdX = self.presenterDelegate?.getHoldLocX() {

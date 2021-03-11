@@ -10,7 +10,14 @@ import AppKit
 
 class KOPartOfScreenPickerViewController : NSViewController {
     
-    weak var propertiesManager : KOPropertiesDataManager?
+    weak var propertiesManager : KOPropertiesDataManager? {
+        didSet {
+            if let source = self.propertiesManager?.getSource(), source.contains(.camera) {
+                self.minWidth = 500
+                self.minHeight = 400
+            }
+        }
+    }
     var dimView = KOPartOfScreenPickerView.init()
     var trackingArea : NSTrackingArea!
 
@@ -20,6 +27,9 @@ class KOPartOfScreenPickerViewController : NSViewController {
     
     var selectionView : KOPartOfScreenSelectionView?
     var sizeIndicator : KOPartOfScreenSizeIndicator?
+    
+    var minWidth : CGFloat = 100
+    var minHeight : CGFloat = 100
     
     override func loadView() {
         self.view = NSFlippedView.init()
@@ -101,8 +111,8 @@ class KOPartOfScreenPickerViewController : NSViewController {
     
     func setPartOfScreenSelection() {
         guard self.cropRect != nil else { return }
-        self.cropRect!.size.width = max(self.cropRect!.width, 100)
-        self.cropRect!.size.height = max(self.cropRect!.height, 100)
+        self.cropRect!.size.width = max(self.cropRect!.width, self.minWidth)
+        self.cropRect!.size.height = max(self.cropRect!.height, self.minHeight)
         self.setSelectionMask()
         self.selectionView = KOPartOfScreenSelectionView.init()
         self.selectionView?.viewDelegate = self

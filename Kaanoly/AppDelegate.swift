@@ -15,8 +15,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         coordinator = KOWindowsCoordinator.init()
-        NSApp.presentationOptions = [.autoHideDock]
-        NSApp.setActivationPolicy(.accessory)
+//        NSApp.presentationOptions = [.autoHideDock]
+//        NSApp.setActivationPolicy(.accessory)
         NSRunningApplication.current.activate(options: .activateAllWindows)
     }
 

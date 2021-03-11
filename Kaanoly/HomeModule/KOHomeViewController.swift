@@ -539,7 +539,7 @@ class KOHomeViewController : NSViewController {
             if self.propertiesManager?.getIsCloudDirectory() == true {
                 self.locationLabel.stringValue = "iCloud"
             } else {
-                self.locationLabel.stringValue = "\(self.propertiesManager!.getStorageDirectory()!.lastPathComponent)abcdefghijklmnopqrstuvw"
+                self.locationLabel.stringValue = "\(self.propertiesManager!.getStorageDirectory()!.lastPathComponent)"
             }
         } else {
             self.locationButton.image = NSImage.init(named: "Directory_unselected")
@@ -611,7 +611,7 @@ class KOHomeViewController : NSViewController {
         if item.tag == self.screenDropDown.menu?.items.count {
             self.viewDelegate?.openPartOfScreenPicker()
         } else {
-            self.propertiesManager?.setCropped(Rect: nil, displayId: NSScreen.screens[item.tag-1].getScreenNumber()!)
+            self.propertiesManager?.removeCroppedRect()
             self.propertiesManager?.setCurrentScreen(NSScreen.screens[item.tag-1])
         }
     }

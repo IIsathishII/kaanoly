@@ -72,6 +72,9 @@ class KOWindowsCoordinator : NSObject {
             controlWindow?.isEnabled = false
 //            controlWindow?.setFrame(NSRect.init(origin: CGPoint.init(x: 0, y: 600), size: CGSize.init(width: 36, height: 112)), display: true)
             
+            NSApp.presentationOptions = [.autoHideDock]
+            NSApp.setActivationPolicy(.accessory)
+            
 //            var displays : [CGDirectDisplayID] = Array.init(repeating: 0, count: 10)
 //            var count : uint32 = 0
 //            let error = CGGetOnlineDisplayList (10, &displays, &count)
@@ -248,6 +251,7 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         self.overlayWindow?.orderFrontRegardless()
         self.homeWindowController?.window?.makeKey()
         self.homeWindowController?.window?.orderFrontRegardless()
+        self.controlWindow?.setControlFrame()
         
         self.overlayWindow?.overlayViewController.resetCameraPreviewPosition()
     }
@@ -290,25 +294,37 @@ extension KOWindowsCoordinator : NSWindowDelegate {
 extension KOWindowsCoordinator : NSMenuDelegate {
     
     func setUpMenu(_ currMenu : NSMenu) {
-        let recentVideos = self.propertiesManager?.getRecentVideos() ?? []
-        if !recentVideos.isEmpty {
-            let item = NSMenuItem.init(title: "Recent Videos", action: nil, keyEquivalent: "")
-            currMenu.addItem(item)
-        }
-        for video in recentVideos {
-            let item = NSMenuItem.init(title: "Video", action: #selector(recentVideoSelected(_:)), keyEquivalent: "")
-            let itemView = KORecentLocalVideosMenuView.init(url: video)
-            itemView.autoresizingMask = [.width, .height]
-            item.view = itemView
-            item.target = self
-            currMenu.addItem(item)
-        }
-        
-        currMenu.addItem(NSMenuItem.separator())
-        
-        let recordItem = NSMenuItem.init(title: "Open Recording", action: #selector(openRecordingLobby), keyEquivalent: "r")
+        let recordItem = NSMenuItem.init(title: "Open Recording Lobby", action: #selector(openRecordingLobby), keyEquivalent: "r")
         recordItem.target = self
         currMenu.addItem(recordItem)
+        currMenu.addItem(NSMenuItem.separator())
+        
+        if let isCloudDir = self.propertiesManager?.getIsCloudDirectory(), !isCloudDir, let dir = self.propertiesManager?.getStorageDirectory() {
+            let recentVideos = self.propertiesManager?.getRecentVideos() ?? []
+            if !recentVideos.isEmpty {
+                let item = NSMenuItem.init(title: "Recent Videos from '\(dir.lastPathComponent)'", action: nil, keyEquivalent: "")
+                currMenu.addItem(item)
+            }
+            for video in recentVideos {
+                let item = NSMenuItem.init(title: "Video", action: #selector(recentVideoSelected(_:)), keyEquivalent: "")
+                let itemView = KORecentLocalVideosMenuView.init(url: video)
+                itemView.autoresizingMask = [.width, .height]
+                item.view = itemView
+                item.target = self
+                currMenu.addItem(item)
+            }
+            if !recentVideos.isEmpty {
+                let item = NSMenuItem.init(title: "Open '\(dir.lastPathComponent)'", action: #selector(openLocalDir), keyEquivalent: "")
+                item.target = self
+                currMenu.addItem(item)
+            }
+            currMenu.addItem(NSMenuItem.separator())
+        } else if let isCloudDir = self.propertiesManager?.getIsCloudDirectory(), isCloudDir {
+            let item = NSMenuItem.init(title: "Open iCloud Directory", action: #selector(openCloudDir), keyEquivalent: "")
+            item.target = self
+            currMenu.addItem(item)
+            currMenu.addItem(NSMenuItem.separator())
+        }
         
         let quitItem = NSMenuItem.init(title: "Quit", action: #selector(quitApp), keyEquivalent: "")
         quitItem.target = self
@@ -325,6 +341,18 @@ extension KOWindowsCoordinator : NSMenuDelegate {
     @objc func recentVideoSelected(_ item: NSMenuItem) {
         if let url = (item.view as? KORecentLocalVideosMenuView)?.assetUrl {
             NSWorkspace.shared.open(url)
+        }
+    }
+    
+    @objc func openCloudDir() {
+        if let url = FileManager.default.url(forUbiquityContainerIdentifier: nil) {
+            NSWorkspace.shared.open(url)
+        }
+    }
+    
+    @objc func openLocalDir() {
+        if let dir = self.propertiesManager?.getStorageDirectory() {
+            NSWorkspace.shared.open(dir)
         }
     }
 }

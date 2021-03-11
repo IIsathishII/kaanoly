@@ -17,22 +17,27 @@ class KOPropertiesStore : NSObject {
     private var screenId : CGDirectDisplayID? = NSScreen.screens[0].getScreenNumber()
     private var captureMouseClick = (UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.captureMouseClick) as? Bool) ?? false
     private var isMirrored = (UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.mirrorCamera) as? Bool) ?? true
-    private var storageDirectory : URL? = {
-        var isStale = false
-        if let storedValData = UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.storageDirectory) as? Data, let storedVal = try? URL.init(resolvingBookmarkData: storedValData, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale) {
-            var isDir: ObjCBool = false
-            if isStale {
-                return nil
-            }
-            //TODO:: Handle security scope access start and stop
-            if FileManager.default.fileExists(atPath: storedVal.relativePath, isDirectory: &isDir) {
-                if isDir.boolValue {
-                    return storedVal
+    private var storageDirectory : URL? {
+        get {
+            var isStale = false
+            if let storedValData = UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.storageDirectory) as? Data, let storedVal = try? URL.init(resolvingBookmarkData: storedValData, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale) {
+                var isDir: ObjCBool = false
+                if isStale {
+                    return nil
+                }
+                //TODO:: Handle security scope access start and stop
+                if FileManager.default.fileExists(atPath: storedVal.relativePath, isDirectory: &isDir) {
+                    if isDir.boolValue {
+                        return storedVal
+                    }
                 }
             }
+            return nil
         }
-        return nil
-    }()
+        set {
+            
+        }
+    }
     private var isCloudDirectory : Bool = {
        var isiCloudAvailable = false
         isiCloudAvailable = (UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.isCloudDirectory) as? Bool) ?? isiCloudAvailable
@@ -47,7 +52,7 @@ class KOPropertiesStore : NSObject {
         get {
             var recentVideos = [URL]()
             if let storedRecentVideos = UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.recentVideos) as? [Data] {
-                    let recentVideoUrls = storedRecentVideos.compactMap { (video) -> URL? in
+                let recentVideoUrls = storedRecentVideos.compactMap { (video) -> URL? in
                     var isStale = false
                     //TODO:: Remove stale urls : Deleted or moved
                     if let videoUrl = try? URL.init(resolvingBookmarkData: video, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale) {
@@ -118,6 +123,7 @@ extension KOPropertiesStore : KOPropertiesDataManager {
             UserDefaults.standard.setValue(data, forKey: KOUserDefaultKeyConstants.storageDirectory)
             self.setIsCloudDirectory(false)
             KORecordingCoordinator.sharedInstance.modifyRecorder(propertiesManager: self)
+            self.clearAllBookmarks()
 //            val.startAccessingSecurityScopedResource()
         } else {
             //TODO:: Error handling.
@@ -217,14 +223,24 @@ extension KOPropertiesStore : KOPropertiesDataManager {
         }
     }
     
+    func clearAllBookmarks() {
+        UserDefaults.standard.removeObject(forKey: KOUserDefaultKeyConstants.recentVideos)
+    }
+    
     func getRecentVideos() -> [URL] {
         return self.recentVideos
     }
     
+    func removeCroppedRect() {
+        self.croppedRect = nil
+        self.viewDelegate?.closePartOfScreenPicker()
+    }
+    
     func setCropped(Rect rect: NSRect?, displayId: CGDirectDisplayID) {
-        self.croppedRect = rect
-        if rect != nil, let screen = NSScreen.screens.first(where: { $0.getScreenNumber() == displayId }) {
-//            self.screenId = displayId
+        if let screen = NSScreen.screens.first(where: { $0.getScreenNumber() == displayId }) {
+            if rect != nil {
+                self.croppedRect = rect
+            }
             self.setCurrentScreen(screen)
         }
         self.viewDelegate?.closePartOfScreenPicker()
@@ -241,5 +257,12 @@ extension KOPropertiesStore : KOPropertiesDataManager {
     func resetProperties() {
         self.screenId = NSScreen.screens[0].getScreenNumber()
         self.croppedRect = nil
+    }
+    
+    func isCloud(Url url: URL) -> Bool {
+        if let dir = FileManager.default.url(forUbiquityContainerIdentifier: nil) {
+            return url.path.hasPrefix(dir.path)
+        }
+        return false
     }
 }

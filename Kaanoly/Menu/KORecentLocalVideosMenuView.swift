@@ -89,7 +89,7 @@ class KORecentLocalVideosMenuView : NSView {
             assetNameLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -12),
             assetNameLabel.topAnchor.constraint(equalTo: thumbnail.topAnchor),
             
-            self.widthAnchor.constraint(equalToConstant: 240),
+            self.widthAnchor.constraint(greaterThanOrEqualToConstant: 240),
             self.heightAnchor.constraint(equalToConstant: 64)
         ])
         self.assetUrl.stopAccessingSecurityScopedResource()
