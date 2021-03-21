@@ -32,7 +32,7 @@ class KOWindowsCoordinator : NSObject {
         self.propertiesManager = KOPropertiesStore.init()
         menu = NSMenu.init()
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusItem.button?.title = "Kaanoly"
+        statusItem.button?.title = "Vime"
         super.init()
         self.setUpMenu(self.menu)
         self.propertiesManager?.viewDelegate = self
@@ -181,7 +181,7 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         AudioServicesPlaySystemSound(stopRecordSound)
         
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusItem.button?.title = "Kaanoly"
+        statusItem.button?.title = "Vime"
         statusItem.menu = self.menu
         self.controlWindow?.orderOut(nil)
         self.controlWindow = nil
