@@ -181,6 +181,7 @@ class KOHomeViewController : NSViewController {
 
     weak var propertiesManager : KOPropertiesDataManager? {
         didSet {
+            self.setSourceState()
             self.setAdvancedMenuItemStates()
             self.setLocationState()
         }
@@ -314,6 +315,14 @@ class KOHomeViewController : NSViewController {
             self.audioButton.widthAnchor.constraint(equalToConstant: 56),
             self.audioButton.heightAnchor.constraint(equalToConstant: 56),
         ])
+    }
+    
+    func setSourceState() {
+        if let source = self.propertiesManager?.getSource() {
+            self.screenButton.state = source.contains(.screen) ? .on : .off
+            self.cameraButton.state = source.contains(.camera) ? .on : .off
+            self.audioButton.state = source.contains(.audio) ? .on : .off
+        }
     }
     
     func setScreenDropDownMenu() {
