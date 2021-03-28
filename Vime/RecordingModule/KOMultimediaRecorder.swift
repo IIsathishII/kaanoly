@@ -150,7 +150,7 @@ class KOMultimediaRecorder : NSObject {
             screenCaptureSession?.commitConfiguration()
         }
         if sources.contains(.camera) {
-            if cameraCaptureSession!.canAddInput(cameraInput!) {
+            if cameraInput != nil && cameraCaptureSession!.canAddInput(cameraInput!) {
                 cameraCaptureSession!.addInput(cameraInput!)
                 self.setMirroredProp()
             }

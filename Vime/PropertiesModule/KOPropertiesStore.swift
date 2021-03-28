@@ -13,7 +13,16 @@ class KOPropertiesStore : NSObject {
     
     weak var viewDelegate: KOWindowsCoordinatorDelegate?
 
-    private var source : KOMediaSettings.MediaSource = UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.source) as? KOMediaSettings.MediaSource ?? [.camera, .screen, .audio]
+    private var source : KOMediaSettings.MediaSource = {
+        var defaultSource = UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.source) as? KOMediaSettings.MediaSource ?? [.camera, .screen, .audio]
+        if AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
+            defaultSource.remove(.camera)
+        }
+        if AVCaptureDevice.authorizationStatus(for: .audio) != .authorized {
+            defaultSource.remove(.audio)
+        }
+        return defaultSource
+    }()
     private var screenId : CGDirectDisplayID? = NSScreen.screens[0].getScreenNumber()
     private var captureMouseClick = (UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.captureMouseClick) as? Bool) ?? false
     private var isMirrored = (UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.mirrorCamera) as? Bool) ?? true
@@ -44,6 +53,7 @@ class KOPropertiesStore : NSObject {
         if isiCloudAvailable && FileManager.default.ubiquityIdentityToken == nil {
             isiCloudAvailable = false
         }
+        FileManager.default.url(forUbiquityContainerIdentifier: nil)
         return isiCloudAvailable
     }()
     private var croppedRect : NSRect?

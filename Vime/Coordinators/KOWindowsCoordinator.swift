@@ -36,6 +36,19 @@ class KOWindowsCoordinator : NSObject {
         super.init()
         self.setUpMenu(self.menu)
         self.propertiesManager?.viewDelegate = self
+        self.handleInputPermissions()
+    }
+    
+    func handleInputPermissions() {
+        let videoStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        if videoStatus == .notDetermined {
+            AVCaptureDevice.requestAccess(for: .video) { (isGranted) in
+                let audioStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+                if audioStatus == .notDetermined {
+                    AVCaptureDevice.requestAccess(for: .audio) { (isGranted) in }
+                }
+            }
+        }
     }
     
     @objc func openRecordingLobby() {

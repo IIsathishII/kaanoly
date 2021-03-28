@@ -220,6 +220,7 @@ class KOHomeViewController : NSViewController {
     var recordButton : NSButton = {
         let button = NSButton.init()
         button.image = NSImage.init(named: "Record")!
+        button.setButtonType(.momentaryChange)
         button.imagePosition = .imageOnly
         button.isBordered = false
         return button
@@ -567,6 +568,29 @@ class KOHomeViewController : NSViewController {
     }
     
     @objc func beginRecording() {
+        if let source = self.propertiesManager?.getSource() {
+            var permissionForScreen = true
+            var permissionForCamera = true
+            var permissionForAudio = true
+            if !CGRequestScreenCaptureAccess() {
+                permissionForScreen = false
+            }
+            if source.contains(.camera) && AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
+                permissionForCamera = false
+            }
+            if source.contains(.audio) && AVCaptureDevice.authorizationStatus(for: .audio) != .authorized {
+                permissionForAudio = false
+            }
+            if !permissionForCamera || !permissionForScreen || !permissionForAudio {
+                let alert = NSAlert.init()
+                alert.addButton(withTitle: "Ok")
+                alert.messageText = "Please allow access to stuff!"
+                self.viewDelegate?.didOpenDirectoryPanel()
+                alert.runModal()
+                self.viewDelegate?.didCloseDirectoryPanel()
+                return
+            }
+        }
         if !self.isStorageLocationAvailable() {
             self.viewDelegate?.didOpenDirectoryPanel()
             let alert = NSAlert.init()
