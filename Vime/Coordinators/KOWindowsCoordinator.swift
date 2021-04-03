@@ -168,7 +168,11 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         
         // Sets Count Down Indicator to the middle of the recording screen
         if var rect = self.propertiesManager?.getCurrentScreenFrame() {
-            self.countDownWindow?.setFrameTopLeftPoint(NSPoint.init(x: rect.origin.x+rect.width/2-self.countDownWindow!.frame.size.width/2, y: rect.origin.y+rect.height/2+self.countDownWindow!.frame.height/2))
+            var originY = rect.origin.y+rect.height/2+self.countDownWindow!.frame.height/2
+            if let displayScreenFrame = self.propertiesManager?.getCurrentScreen()?.frame, let isCropped = self.propertiesManager?.isRecordingPartOfWindow() {
+                originY = displayScreenFrame.size.height-rect.origin.y-rect.height/2+self.countDownWindow!.frame.height/2
+            }
+            self.countDownWindow?.setFrameTopLeftPoint(NSPoint.init(x: rect.origin.x+rect.width/2-self.countDownWindow!.frame.size.width/2, y: originY))
         }
 
         self.countDownWindow?.startCount {
