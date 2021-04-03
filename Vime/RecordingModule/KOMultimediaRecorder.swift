@@ -193,6 +193,7 @@ class KOMultimediaRecorder : NSObject {
     
     func endRecording() {
         self.isRecording = false
+        guard assetWriter?.status != AVAssetWriter.Status.cancelled else { return }
         assetWriter?.finishWriting {
             DispatchQueue.main.sync {
                 if self.assetWriter?.status == .failed || self.assetWriter?.status == .cancelled {

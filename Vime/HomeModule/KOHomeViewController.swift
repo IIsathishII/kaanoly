@@ -323,9 +323,13 @@ class KOHomeViewController : NSViewController {
             self.screenButton.state = source.contains(.screen) ? .on : .off
             self.cameraButton.state = source.contains(.camera) ? .on : .off
             self.audioButton.state = source.contains(.audio) ? .on : .off
+            
+            self.screenDropDown.isEnabled = self.screenButton.state == .on
+            self.videoDropDown.isEnabled = self.cameraButton.state == .on
+            self.audioDropDown.isEnabled = self.audioButton.state == .on
         }
-        self.screenButton.isClickNotAllowed = self.cameraButton.state == .off
-        self.cameraButton.isClickNotAllowed = self.screenButton.state == .off
+        self.screenButton.isClickNotAllowed = self.cameraButton.state == .off && self.screenButton.state == .on
+        self.cameraButton.isClickNotAllowed = self.screenButton.state == .off && self.cameraButton.state == .on
     }
     
     func setScreenDropDownMenu() {
@@ -562,7 +566,7 @@ class KOHomeViewController : NSViewController {
             var permissionForScreen = true
             var permissionForCamera = true
             var permissionForAudio = true
-            if !CGRequestScreenCaptureAccess() {
+            if source.contains(.screen) && !CGRequestScreenCaptureAccess() {
                 permissionForScreen = false
             }
             if source.contains(.camera) && AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
@@ -576,6 +580,15 @@ class KOHomeViewController : NSViewController {
                 alert.addButton(withTitle: "Ok")
                 alert.messageText = "Allow access to the selected sources to begin recording"
                 alert.informativeText = "Go to System Preferences -> Security & Privacy -> Privacy to grant the permissions"
+                self.viewDelegate?.didOpenDirectoryPanel()
+                alert.runModal()
+                self.viewDelegate?.didCloseDirectoryPanel()
+                return
+            }
+            if source.contains(.audio) && !source.contains(.camera) && !source.contains(.screen) {
+                let alert = NSAlert.init()
+                alert.addButton(withTitle: "Ok")
+                alert.messageText = "Please select a video recording source(Screen/Camera)"
                 self.viewDelegate?.didOpenDirectoryPanel()
                 alert.runModal()
                 self.viewDelegate?.didCloseDirectoryPanel()
@@ -601,18 +614,36 @@ class KOHomeViewController : NSViewController {
         }
     }
     
+    func checkPermissionFor(Source source: KOMediaSettings.MediaSource) -> Bool {
+        var isAuthorized = true
+        var messageText = ""
+        if source == .camera {
+            messageText = "Allow access to the camera"
+            isAuthorized = !(AVCaptureDevice.authorizationStatus(for: .video) != .authorized)
+        } else if source == .screen {
+            messageText = "Allow access to the screen"
+            isAuthorized = CGRequestScreenCaptureAccess()
+        } else {
+            messageText = "Allow access to the microphone"
+            isAuthorized = !(AVCaptureDevice.authorizationStatus(for: .audio) != .authorized)
+        }
+        if !isAuthorized {
+            let alert = NSAlert.init()
+            alert.addButton(withTitle: "Ok")
+            alert.messageText = messageText
+            alert.informativeText = "Go to System Preferences -> Security & Privacy -> Privacy to grant the permissions"
+            self.viewDelegate?.didOpenDirectoryPanel()
+            alert.runModal()
+            self.viewDelegate?.didCloseDirectoryPanel()
+            return true
+        }
+        return false
+    }
+    
     @objc func screenSelected() {
-        if let source = self.propertiesManager?.getSource() {
-            if source.contains(.camera) && AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
-                let alert = NSAlert.init()
-                alert.addButton(withTitle: "Ok")
-                alert.messageText = "Allow access to the camera"
-                alert.informativeText = "Go to System Preferences -> Security & Privacy -> Privacy to grant the permissions"
-                self.viewDelegate?.didOpenDirectoryPanel()
-                alert.runModal()
-                self.viewDelegate?.didCloseDirectoryPanel()
-                return
-            }
+        if self.checkPermissionFor(Source: .screen) {
+            self.screenButton.state = .off
+            return
         }
         self.cameraButton.isClickNotAllowed = self.screenButton.state == .off
         self.screenDropDown.isEnabled = (self.screenButton.state == .on)
@@ -620,12 +651,20 @@ class KOHomeViewController : NSViewController {
     }
     
     @objc func cameraSelected() {
+        if self.checkPermissionFor(Source: .camera) {
+            self.cameraButton.state = .off
+            return
+        }
         self.screenButton.isClickNotAllowed = self.cameraButton.state == .off
         self.videoDropDown.isEnabled = (self.cameraButton.state == .on)
         self.changeSource()
     }
     
     @objc func audioSelected() {
+        if self.checkPermissionFor(Source: .audio) {
+            self.audioButton.state = .off
+            return
+        }
         self.audioDropDown.isEnabled = (self.audioButton.state == .on)
         self.changeSource()
     }

@@ -21,6 +21,9 @@ class KOPropertiesStore : NSObject {
         if AVCaptureDevice.authorizationStatus(for: .audio) != .authorized {
             defaultSource.remove(.audio)
         }
+        if !CGRequestScreenCaptureAccess() {
+            defaultSource.remove(.screen)
+        }
         return defaultSource
     }()
     private var screenId : CGDirectDisplayID? = NSScreen.screens[0].getScreenNumber()
