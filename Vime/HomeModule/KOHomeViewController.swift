@@ -324,6 +324,8 @@ class KOHomeViewController : NSViewController {
             self.cameraButton.state = source.contains(.camera) ? .on : .off
             self.audioButton.state = source.contains(.audio) ? .on : .off
         }
+        self.screenButton.isClickNotAllowed = self.cameraButton.state == .off
+        self.cameraButton.isClickNotAllowed = self.screenButton.state == .off
     }
     
     func setScreenDropDownMenu() {
@@ -584,7 +586,8 @@ class KOHomeViewController : NSViewController {
             if !permissionForCamera || !permissionForScreen || !permissionForAudio {
                 let alert = NSAlert.init()
                 alert.addButton(withTitle: "Ok")
-                alert.messageText = "Please allow access to stuff!"
+                alert.messageText = "Allow access to the selected sources to begin recording"
+                alert.informativeText = "Go to System Preferences -> Security & Privacy -> Privacy to grant the permissions"
                 self.viewDelegate?.didOpenDirectoryPanel()
                 alert.runModal()
                 self.viewDelegate?.didCloseDirectoryPanel()
@@ -611,6 +614,18 @@ class KOHomeViewController : NSViewController {
     }
     
     @objc func screenSelected() {
+        if let source = self.propertiesManager?.getSource() {
+            if source.contains(.camera) && AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
+                let alert = NSAlert.init()
+                alert.addButton(withTitle: "Ok")
+                alert.messageText = "Allow access to the camera"
+                alert.informativeText = "Go to System Preferences -> Security & Privacy -> Privacy to grant the permissions"
+                self.viewDelegate?.didOpenDirectoryPanel()
+                alert.runModal()
+                self.viewDelegate?.didCloseDirectoryPanel()
+                return
+            }
+        }
         self.cameraButton.isClickNotAllowed = self.screenButton.state == .off
         self.screenDropDown.isEnabled = (self.screenButton.state == .on)
         self.changeSource()
