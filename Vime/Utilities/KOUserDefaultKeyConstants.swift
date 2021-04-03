@@ -15,5 +15,4 @@ struct KOUserDefaultKeyConstants {
     static var mirrorCamera = "KOUserDefaultKeyConstants.mirrorCamera"
     static var storageDirectory = "KOUserDefaultKeyConstants.storageDirectory"
     static var recentVideos = "KOUserDefaultKeyConstants.recentVideos"
-    static var isCloudDirectory = "KOUserDefaultKeyConstants.isCloudDirectory"
 }

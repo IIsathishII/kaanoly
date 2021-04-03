@@ -47,15 +47,6 @@ class KOPropertiesStore : NSObject {
             
         }
     }
-    private var isCloudDirectory : Bool = {
-       var isiCloudAvailable = false
-        isiCloudAvailable = (UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.isCloudDirectory) as? Bool) ?? isiCloudAvailable
-        if isiCloudAvailable && FileManager.default.ubiquityIdentityToken == nil {
-            isiCloudAvailable = false
-        }
-        FileManager.default.url(forUbiquityContainerIdentifier: nil)
-        return isiCloudAvailable
-    }()
     private var croppedRect : NSRect?
     
     private var recentVideos : [URL] {
@@ -131,27 +122,12 @@ extension KOPropertiesStore : KOPropertiesDataManager {
         }
         if let data = try? val!.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil) {
             UserDefaults.standard.setValue(data, forKey: KOUserDefaultKeyConstants.storageDirectory)
-            self.setIsCloudDirectory(false)
             KORecordingCoordinator.sharedInstance.modifyRecorder(propertiesManager: self)
             self.clearAllBookmarks()
 //            val.startAccessingSecurityScopedResource()
         } else {
             //TODO:: Error handling.
         }
-    }
-    
-    func getIsCloudDirectory() -> Bool {
-        return self.isCloudDirectory
-    }
-    
-    func setIsCloudDirectory(_ val: Bool) {
-        self.isCloudDirectory = val
-        UserDefaults.standard.setValue(val, forKey: KOUserDefaultKeyConstants.isCloudDirectory)
-        if !val {
-            return
-        }
-        self.setStorageDirectory(nil)
-        KORecordingCoordinator.sharedInstance.modifyRecorder(propertiesManager: self)
     }
     
     func getSource() -> KOMediaSettings.MediaSource {
@@ -267,12 +243,5 @@ extension KOPropertiesStore : KOPropertiesDataManager {
     func resetProperties() {
         self.screenId = NSScreen.screens[0].getScreenNumber()
         self.croppedRect = nil
-    }
-    
-    func isCloud(Url url: URL) -> Bool {
-        if let dir = FileManager.default.url(forUbiquityContainerIdentifier: nil) {
-            return url.path.hasPrefix(dir.path)
-        }
-        return false
     }
 }

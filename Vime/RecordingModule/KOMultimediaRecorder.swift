@@ -80,10 +80,7 @@ class KOMultimediaRecorder : NSObject {
         formatter.dateStyle = .medium
         formatter.timeStyle = .medium
         let dateTime = formatter.string(from: Date.init())
-        if let isCloudDirectory = self.propertiesManager?.getIsCloudDirectory(), isCloudDirectory {
-            let url = FileManager.default.homeDirectoryForCurrentUser
-            self.recordingDest = url.appendingPathComponent("Xplnr Video Message \(dateTime).mov")
-        } else if let url = self.propertiesManager?.getStorageDirectory() {
+        if let url = self.propertiesManager?.getStorageDirectory() {
             url.startAccessingSecurityScopedResource()
             self.recordingDest = url.appendingPathComponent("Xplnr Video Message \(dateTime).mov")
         }
@@ -208,28 +205,7 @@ class KOMultimediaRecorder : NSObject {
                     }
                     return
                 }
-                if self.propertiesManager?.getIsCloudDirectory() == true {
-                    DispatchQueue.global().sync {
-                        let containerUrl = FileManager.default.url(forUbiquityContainerIdentifier: nil)
-                        if let iCloudDocsUrl = containerUrl?.appendingPathComponent("Documents") {
-                            let iCloudFile = iCloudDocsUrl.appendingPathComponent(self.recordingDest.lastPathComponent)
-                            if !FileManager.default.fileExists(atPath: iCloudDocsUrl.path, isDirectory: nil) {
-                                try? FileManager.default.createDirectory(at: iCloudDocsUrl, withIntermediateDirectories: true, attributes: nil)
-                            }
-                            do {
-                                try FileManager.default.setUbiquitous(true, itemAt: self.recordingDest, destinationURL: iCloudFile)
-                                self.recordingDest = iCloudFile
-                            } catch {
-                                print("Error in copying file to iCloud")
-                                return
-                            }
-                        }
-                    }
-//                    self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
-                } else {
-                    self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
-                }
-    //            self.propertiesManager?.getStorageDirectory()?.stopAccessingSecurityScopedResource()
+                self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
             }
         }
     }

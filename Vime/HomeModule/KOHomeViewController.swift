@@ -526,11 +526,6 @@ class KOHomeViewController : NSViewController {
         ])
     }
     
-    @objc func selectCloudStorage() {
-        self.propertiesManager?.setIsCloudDirectory(true)
-        self.setLocationState()
-    }
-    
     @objc func selectLocalStorage() {
         let openPanel = NSOpenPanel.init()
         openPanel.canCreateDirectories = true
@@ -546,13 +541,9 @@ class KOHomeViewController : NSViewController {
     }
     
     func setLocationState() {
-        if self.propertiesManager?.getIsCloudDirectory() == true || self.propertiesManager?.getStorageDirectory() != nil {
+        if self.propertiesManager?.getStorageDirectory() != nil {
             self.locationButton.image = NSImage.init(named: "Directory")
-            if self.propertiesManager?.getIsCloudDirectory() == true {
-                self.locationLabel.stringValue = "iCloud"
-            } else {
-                self.locationLabel.stringValue = "\(self.propertiesManager!.getStorageDirectory()!.lastPathComponent)"
-            }
+            self.locationLabel.stringValue = "\(self.propertiesManager!.getStorageDirectory()!.lastPathComponent)"
         } else {
             self.locationButton.image = NSImage.init(named: "Directory_unselected")
             self.locationLabel.stringValue = "Select a storage location"
@@ -560,9 +551,6 @@ class KOHomeViewController : NSViewController {
     }
     
     func isStorageLocationAvailable() -> Bool {
-        if self.propertiesManager?.getIsCloudDirectory() == true {
-            return true
-        }
         if let url = self.propertiesManager?.getStorageDirectory() {
             return true
         }
@@ -597,7 +585,7 @@ class KOHomeViewController : NSViewController {
         if !self.isStorageLocationAvailable() {
             self.viewDelegate?.didOpenDirectoryPanel()
             let alert = NSAlert.init()
-            alert.messageText = "Please Select a storage location(iCloud/Local directory) to begin recording"
+            alert.messageText = "Please Select a storage location to begin recording"
             alert.runModal()
             self.viewDelegate?.didCloseDirectoryPanel()
             self.didSelectDirectoryButton()
@@ -708,11 +696,7 @@ extension KOHomeViewController : NSMenuDelegate {
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
         
-        var item = NSMenuItem.init(title: "iCloud", action: #selector(selectCloudStorage), keyEquivalent: "")
-        item.target = self
-        item.state = self.propertiesManager?.getIsCloudDirectory() == true ? .on : .off
-        menu.addItem(item)
-        menu.addItem(NSMenuItem.separator())
+        var item : NSMenuItem
         if let directory = self.propertiesManager?.getStorageDirectory() {
             item = NSMenuItem.init(title: directory.path, action: nil, keyEquivalent: "")
             item.state = .on

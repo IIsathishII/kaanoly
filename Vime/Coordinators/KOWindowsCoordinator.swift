@@ -312,7 +312,7 @@ extension KOWindowsCoordinator : NSMenuDelegate {
         currMenu.addItem(recordItem)
         currMenu.addItem(NSMenuItem.separator())
         
-        if let isCloudDir = self.propertiesManager?.getIsCloudDirectory(), !isCloudDir, let dir = self.propertiesManager?.getStorageDirectory() {
+        if let dir = self.propertiesManager?.getStorageDirectory() {
             let recentVideos = self.propertiesManager?.getRecentVideos() ?? []
             if !recentVideos.isEmpty {
                 let item = NSMenuItem.init(title: "Recent Videos from '\(dir.lastPathComponent)'", action: nil, keyEquivalent: "")
@@ -332,11 +332,6 @@ extension KOWindowsCoordinator : NSMenuDelegate {
                 currMenu.addItem(item)
             }
             currMenu.addItem(NSMenuItem.separator())
-        } else if let isCloudDir = self.propertiesManager?.getIsCloudDirectory(), isCloudDir {
-            let item = NSMenuItem.init(title: "Open iCloud Directory", action: #selector(openCloudDir), keyEquivalent: "")
-            item.target = self
-            currMenu.addItem(item)
-            currMenu.addItem(NSMenuItem.separator())
         }
         
         let quitItem = NSMenuItem.init(title: "Quit", action: #selector(quitApp), keyEquivalent: "")
@@ -353,12 +348,6 @@ extension KOWindowsCoordinator : NSMenuDelegate {
     
     @objc func recentVideoSelected(_ item: NSMenuItem) {
         if let url = (item.view as? KORecentLocalVideosMenuView)?.assetUrl {
-            NSWorkspace.shared.open(url)
-        }
-    }
-    
-    @objc func openCloudDir() {
-        if let url = FileManager.default.url(forUbiquityContainerIdentifier: nil) {
             NSWorkspace.shared.open(url)
         }
     }
