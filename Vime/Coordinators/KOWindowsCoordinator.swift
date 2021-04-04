@@ -32,7 +32,8 @@ class KOWindowsCoordinator : NSObject {
         self.propertiesManager = KOPropertiesStore.init()
         menu = NSMenu.init()
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusItem.button?.title = "Vime"
+//        statusItem.button?.title = "Vime"
+        statusItem.button?.image = NSImage.init(named: "Menu_icon")!
         super.init()
         self.setUpMenu(self.menu)
         self.propertiesManager?.viewDelegate = self
@@ -180,7 +181,8 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
             self.countDownWindow = nil
             NSStatusBar.system.removeStatusItem(self.statusItem)
             self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-            self.statusItem.button?.title = "Stop"
+//            self.statusItem.button?.title = "Stop"
+            self.statusItem.button?.image = NSImage.init(named: "Stop_Record_Menu_Icon")!
             self.statusItem.button?.target = self
             self.statusItem.button?.action = #selector(self.stopRecording)
             self.controlWindow?.isEnabled = true
@@ -198,7 +200,8 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         AudioServicesPlaySystemSound(stopRecordSound)
         
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusItem.button?.title = "Vime"
+//        statusItem.button?.title = "Vime"
+        statusItem.button?.image = NSImage.init(named: "Menu_icon")!
         statusItem.menu = self.menu
         self.controlWindow?.orderOut(nil)
         self.controlWindow = nil
