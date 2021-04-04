@@ -10,14 +10,13 @@ import AppKit
 
 class KOCircularImageButton : NSButton {
     
-    var color : NSColor
-    
-    init(color: NSColor, image: NSImage) {
-        self.color = color
+    init() {
         super.init(frame: .zero)
         self.wantsLayer = true
         self.focusRingType = .none
-        self.image = image
+        self.imagePosition = .imageOnly
+        self.image = NSImage.init(named: "Part_of_screen_accept")!
+        self.isBordered = false
     }
     
     required init?(coder: NSCoder) {
@@ -25,14 +24,7 @@ class KOCircularImageButton : NSButton {
     }
     
     override func draw(_ dirtyRect: NSRect) {
-        let path = NSBezierPath.init(ovalIn: dirtyRect.insetBy(dx: 1, dy: 1))
-        self.color.setFill()
-        path.fill()
-        
-        self.color.withAlphaComponent(0.4).setStroke()
-        path.lineWidth = 1
-        path.stroke()
-        
-        self.image?.draw(in: dirtyRect)
+        let newRect = NSRect.init(x: dirtyRect.origin.x+2, y: dirtyRect.origin.y+2, width: dirtyRect.width-4, height: dirtyRect.height-4)
+        self.image?.draw(in: newRect)
     }
 }

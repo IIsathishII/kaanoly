@@ -314,7 +314,7 @@ extension KOWindowsCoordinator : NSWindowDelegate {
 extension KOWindowsCoordinator : NSMenuDelegate {
     
     func setUpMenu(_ currMenu : NSMenu) {
-        let recordItem = NSMenuItem.init(title: "Open Recording Lobby", action: #selector(openRecordingLobby), keyEquivalent: "r")
+        let recordItem = NSMenuItem.init(title: "Open Recording Lobby", action: #selector(openRecordingLobby), keyEquivalent: "")
         recordItem.target = self
         currMenu.addItem(recordItem)
         currMenu.addItem(NSMenuItem.separator())

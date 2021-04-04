@@ -17,7 +17,7 @@ class KOPartOfScreenSelectionView : NSView {
     
     var viewDelegate : KOPartOfScreenSelectionViewDelegate?
     
-    var confirmButton : KOCircularImageButton = KOCircularImageButton.init(color: KOStyleProperties.Color.acceptButtonColor, image: NSImage.init(named: "acceptCheck")!)
+    var confirmButton : KOCircularImageButton = KOCircularImageButton.init()
     
     init() {
         super.init(frame: .zero)

@@ -82,7 +82,7 @@ class KOMultimediaRecorder : NSObject {
         let dateTime = formatter.string(from: Date.init())
         if let url = self.propertiesManager?.getStorageDirectory() {
             url.startAccessingSecurityScopedResource()
-            self.recordingDest = url.appendingPathComponent("Xplnr Video Message \(dateTime).mov")
+            self.recordingDest = url.appendingPathComponent("Vime \(dateTime).mov")
         }
     }
     
