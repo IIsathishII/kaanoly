@@ -195,7 +195,7 @@ class KOMultimediaRecorder : NSObject {
         self.isRecording = false
         guard assetWriter?.status != AVAssetWriter.Status.cancelled else { return }
         assetWriter?.finishWriting {
-            DispatchQueue.main.sync {
+            DispatchQueue.main.async {
                 if self.assetWriter?.status == .failed || self.assetWriter?.status == .cancelled {
                     if FileManager.default.fileExists(atPath: self.recordingDest.path) {
                         do {
@@ -207,6 +207,7 @@ class KOMultimediaRecorder : NSObject {
                     return
                 }
                 self.propertiesManager?.bookmarkRecording(Path: self.recordingDest)
+                self.recordingDest.deletingLastPathComponent().stopAccessingSecurityScopedResource()
             }
         }
     }

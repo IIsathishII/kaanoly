@@ -355,13 +355,17 @@ extension KOWindowsCoordinator : NSMenuDelegate {
     
     @objc func recentVideoSelected(_ item: NSMenuItem) {
         if let url = (item.view as? KORecentLocalVideosMenuView)?.assetUrl {
+            url.startAccessingSecurityScopedResource()
             NSWorkspace.shared.open(url)
+            url.stopAccessingSecurityScopedResource()
         }
     }
     
     @objc func openLocalDir() {
         if let dir = self.propertiesManager?.getStorageDirectory() {
+            dir.startAccessingSecurityScopedResource()
             NSWorkspace.shared.open(dir)
+            dir.stopAccessingSecurityScopedResource()
         }
     }
 }

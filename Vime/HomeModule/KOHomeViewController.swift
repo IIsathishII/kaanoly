@@ -712,7 +712,11 @@ class KOHomeViewController : NSViewController {
     }
     
     @objc func didSelectDirectoryButton() {
-        locationMenu.popUp(positioning: nil, at: NSPoint.init(x: 0, y: self.locationButton.bounds.height), in: self.locationButton)
+        if self.propertiesManager?.getStorageDirectory() == nil {
+            self.selectLocalStorage()
+        } else {
+            locationMenu.popUp(positioning: nil, at: NSPoint.init(x: 0, y: self.locationButton.bounds.height), in: self.locationButton)
+        }
     }
     
     @objc func toggleHighlightMouseClick(_ item : NSMenuItem) {
