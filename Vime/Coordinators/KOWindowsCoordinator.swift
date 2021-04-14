@@ -273,6 +273,10 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         self.homeWindowController?.window?.orderFrontRegardless()
         self.controlWindow?.setControlFrame()
         
+        if self.propertiesManager?.getCroppedRect() == nil {
+            (self.homeWindowController?.window as? KOHomeWindow)?.homeViewController.setScreenDropDownMenu()
+        }
+        self.overlayWindow?.overlayViewController.cameraPreviewController?.updatePreview()
         self.overlayWindow?.overlayViewController.resetCameraPreviewPosition()
     }
     

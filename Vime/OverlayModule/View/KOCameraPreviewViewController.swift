@@ -62,6 +62,10 @@ class KOCameraPreviewViewController: NSViewController {
         NSLayoutConstraint.activate(newConstraints)
     }
     
+    func updatePreview() {
+        self.previewView.layer = KORecordingCoordinator.sharedInstance.getPreviewLayer()
+    }
+    
     func removeCornerRadius() {
         self.view.layer?.cornerRadius = 0
     }
