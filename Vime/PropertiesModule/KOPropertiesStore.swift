@@ -14,7 +14,7 @@ class KOPropertiesStore : NSObject {
     weak var viewDelegate: KOWindowsCoordinatorDelegate?
 
     private var source : KOMediaSettings.MediaSource = {
-        var defaultSource = UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.source) as? KOMediaSettings.MediaSource ?? [.camera, .screen, .audio]
+        var defaultSource : KOMediaSettings.MediaSource = UserDefaults.standard.value(forKey: KOUserDefaultKeyConstants.source) as? KOMediaSettings.MediaSource ?? [.camera, .screen, .audio]
         if AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
             defaultSource.remove(.camera)
         }
