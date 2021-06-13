@@ -211,6 +211,8 @@ extension KOWindowsCoordinator : KOWindowsCoordinatorDelegate {
         self.homeWindowController = nil
         KORecordingCoordinator.sharedInstance.endRecording()
         KORecordingCoordinator.sharedInstance.destroyRecorder()
+        
+        KOReviewPrompter.requestReview()
     }
     
     func stopRecordingAbruptly() {
